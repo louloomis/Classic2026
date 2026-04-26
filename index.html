@@ -449,7 +449,7 @@
       </div>
       <div class="field">
         <label>Event Name</label>
-        <input type="text" id="cfg-event-name" placeholder="Race Day 2025">
+        <input type="text" id="cfg-event-name" placeholder="Columbine Classic 2026">
       </div>
     </div>
     <div class="modal-btns">
@@ -464,7 +464,12 @@
 
 <script>
 // ── CONFIG ────────────────────────────────────────────────────────────────
-let cfg = { scriptUrl:'', twilioUrl:'', fromPhone:'', eventName:'Race Day' };
+let cfg = {
+  scriptUrl:  'https://script.google.com/macros/s/AKfycbz155UkvEjBCywVaHpAsq2octFDmMkkrQjI8nDYyeKmztaiRQSFYQph_ZEvlGDiKe8Xxg/exec',
+  twilioUrl:  'https://classicpari.landcreations.workers.dev',
+  fromPhone:  '+17205752284',
+  eventName:  'Columbine Classic 2026'
+};
 
 function loadConfig() {
   try { Object.assign(cfg, JSON.parse(localStorage.getItem('wagering_config') || '{}')); } catch(e) {}
