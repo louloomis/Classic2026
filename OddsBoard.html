@@ -17,6 +17,8 @@
     --show:      #A855F7;
     --text:      #E8EAF0;
     --text-dim:  #6B7280;
+    --text-mid:  #9CA3AF;
+    --danger:    #EF4444;
     --font-head: 'Bebas Neue', sans-serif;
     --font-mono: 'DM Mono', monospace;
     --font-body: 'DM Sans', sans-serif;
@@ -34,16 +36,20 @@
   .header-top { display: flex; align-items: center; padding: 10px 24px 6px; gap: 20px; }
   .logo { font-family: var(--font-head); font-size: 38px; letter-spacing: 3px; color: var(--gold); text-shadow: 0 0 30px rgba(240,180,41,0.3); line-height: 1; flex-shrink: 0; }
   .logo-sub { font-family: var(--font-mono); font-size: 11px; letter-spacing: 3px; color: var(--text-dim); text-transform: uppercase; }
-  .pools { display: flex; gap: 10px; margin-left: auto; align-items: center; }
-  .pool-chip { font-family: var(--font-mono); font-size: 14px; font-weight: 500; padding: 7px 16px; border-radius: 4px; border: 1px solid; }
+  .pools { display: flex; gap: 10px; margin-left: auto; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
+  .pool-chip { font-family: var(--font-mono); font-size: 13px; font-weight: 500; padding: 6px 14px; border-radius: 4px; border: 1px solid; }
   .pool-chip.win   { color: var(--win);   border-color: #14532d; background: #0d2818; }
   .pool-chip.place { color: var(--place); border-color: #1e3a8a; background: #0a1628; }
   .pool-chip.show  { color: var(--show);  border-color: #581c87; background: #160d22; }
   .pool-chip.grand { color: var(--gold);  border-color: #7a5c14; background: #1a1200; }
   .header-bottom { display: flex; align-items: center; padding: 4px 24px 8px; gap: 16px; }
-  .slide-dots { display: flex; gap: 8px; align-items: center; }
-  .dot { width: 32px; height: 4px; border-radius: 2px; background: var(--border); transition: background 0.3s; }
-  .dot.active { background: var(--gold); }
+  .slide-dots { display: flex; gap: 6px; align-items: center; }
+  .dot { width: 28px; height: 4px; border-radius: 2px; background: var(--border); transition: background 0.3s; flex-shrink: 0; }
+  .dot.active  { background: var(--gold); }
+  .dot.top20   { background: var(--win);   opacity: 0.4; }
+  .dot.bot20   { background: var(--danger); opacity: 0.4; }
+  .dot.active.top20 { opacity: 1; }
+  .dot.active.bot20 { opacity: 1; }
   .slide-label { font-family: var(--font-mono); font-size: 12px; color: var(--text-dim); letter-spacing: 2px; }
   .timestamp { font-family: var(--font-mono); font-size: 11px; color: var(--text-dim); margin-left: auto; }
   #progress-bar { height: 3px; background: var(--border); position: relative; overflow: hidden; }
@@ -52,13 +58,16 @@
   /* ── SLIDES ── */
   #slide-a, #slide-b {
     position: fixed; top: 132px; left: 14px; right: 14px; bottom: 14px;
-    display: flex; flex-direction: column; gap: 8px;
     transition: opacity 0.5s ease, transform 0.5s ease;
   }
   #slide-a.hidden, #slide-b.hidden { opacity: 0; pointer-events: none; transform: translateY(16px); }
   #slide-a.visible, #slide-b.visible { opacity: 1; pointer-events: all; transform: translateY(0); }
 
-  /* ── FLIGHT BLOCK ── */
+  /* ── FLIGHT SLIDES (flex column layout) ── */
+  .flight-slide {
+    display: flex; flex-direction: column; gap: 8px;
+    height: 100%;
+  }
   .flight-block { flex: 1; display: grid; grid-template-columns: 80px 1fr; gap: 8px; min-height: 0; }
   .flight-label {
     display: flex; flex-direction: column;
@@ -70,71 +79,127 @@
   .flight-label .fl-word { font-size: 11px; letter-spacing: 3px; opacity: 0.7; }
   .teams-row { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
 
-  /* ── TEAM BOX ── */
-  .team-box {
-    border-radius: 8px; border: 1px solid;
-    display: flex; flex-direction: column;
-    overflow: hidden; min-height: 0;
-  }
-
-  /* Top section: number + names + total */
-  .team-top {
-    padding: 6px 8px 4px;
-    display: flex; flex-direction: column; gap: 2px;
-    flex: 1;
-  }
-  .team-num {
-    font-family: var(--font-head);
-    font-size: 22px; color: var(--gold); line-height: 1;
-  }
-
-  /* Name lines — M: and G: prefixed */
+  /* ── TEAM BOX (flight view) ── */
+  .team-box { border-radius: 8px; border: 1px solid; display: flex; flex-direction: column; overflow: hidden; min-height: 0; }
+  .team-top { padding: 6px 8px 4px; display: flex; flex-direction: column; gap: 2px; flex: 1; }
+  .team-num  { font-family: var(--font-head); font-size: 22px; color: var(--gold); line-height: 1; }
   .team-names { display: flex; flex-direction: column; gap: 1px; margin-top: 1px; }
-  .name-line {
-    font-family: var(--font-body); font-size: 20px; font-weight: 500;
-    color: var(--text); line-height: 1.2;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    display: flex; gap: 3px; align-items: baseline;
-  }
-  .name-prefix {
-    font-family: var(--font-mono); font-size: 16px; font-weight: 500;
-    color: var(--gold); opacity: 0.8; flex-shrink: 0; letter-spacing: 0.5px;
-  }
+  .name-line { font-family: var(--font-body); font-size: 11px; font-weight: 500; color: var(--text); line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; gap: 3px; align-items: baseline; }
+  .name-prefix { font-family: var(--font-mono); font-size: 9px; font-weight: 500; color: var(--gold); opacity: 0.8; flex-shrink: 0; letter-spacing: 0.5px; }
   .name-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-
-  /* Total bets — doubled from before (was 11px → now 15px) */
-  .team-total {
-    font-family: var(--font-mono); font-size: 20px; font-weight: 500;
-    color: var(--text-dim); margin-top: 3px;
-  }
+  .team-total { font-family: var(--font-mono); font-size: 15px; font-weight: 500; color: var(--text-dim); margin-top: 3px; }
   .team-total span { color: var(--gold); }
-
-  /* Odds row — doubled from before (was 14px → now 20px) */
-  .odds-row {
-    display: grid; grid-template-columns: 1fr 1fr 1fr;
-    border-top: 1px solid;
-  }
-  .odds-cell {
-    padding: 5px 4px; text-align: center;
-    font-family: var(--font-mono); line-height: 1;
-  }
-  .odds-cell .odds-label {
-    font-size: 9px; letter-spacing: 1px; opacity: 0.65;
-    display: block; margin-bottom: 2px; text-transform: uppercase;
-  }
-  .odds-cell .odds-val {
-    font-size: 20px; font-weight: 500; display: block; line-height: 1;
-  }
+  .odds-row { display: grid; grid-template-columns: 1fr 1fr 1fr; border-top: 1px solid; }
+  .odds-cell { padding: 5px 4px; text-align: center; font-family: var(--font-mono); line-height: 1; }
+  .odds-cell .odds-label { font-size: 9px; letter-spacing: 1px; opacity: 0.65; display: block; margin-bottom: 2px; text-transform: uppercase; }
+  .odds-cell .odds-val   { font-size: 20px; font-weight: 500; display: block; line-height: 1; }
   .odds-cell.win-cell   { color: var(--win);   border-right: 1px solid; }
   .odds-cell.place-cell { color: var(--place); border-right: 1px solid; }
   .odds-cell.show-cell  { color: var(--show); }
   .odds-cell.no-bets .odds-val { color: var(--text-dim); opacity: 0.35; font-size: 16px; }
 
-  /* ── CONFIG ── */
-  #config-overlay {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.92);
-    z-index: 500; display: flex; align-items: center; justify-content: center;
+  /* ── LIST SLIDES (top20 / bottom20) ── */
+  .list-slide {
+    height: 100%;
+    display: flex; flex-direction: column;
+    overflow: hidden;
   }
+
+  /* List header bar */
+  .list-header {
+    display: flex; align-items: center; gap: 16px;
+    padding: 10px 16px 10px;
+    border-radius: 8px; margin-bottom: 10px;
+    flex-shrink: 0;
+  }
+  .list-header.top    { background: #0d2818; border: 1px solid #14532d; }
+  .list-header.bottom { background: #1a0a0a; border: 1px solid #7f1d1d; }
+  .list-header-title {
+    font-family: var(--font-head); font-size: 32px; letter-spacing: 2px;
+  }
+  .list-header.top    .list-header-title { color: var(--win); }
+  .list-header.bottom .list-header-title { color: var(--danger); }
+  .list-header-sub {
+    font-family: var(--font-mono); font-size: 11px; letter-spacing: 2px;
+    color: var(--text-dim); text-transform: uppercase;
+  }
+
+  /* Column labels */
+  .list-col-labels {
+    display: grid;
+    grid-template-columns: 40px 50px 1fr 120px 110px 110px 110px;
+    gap: 8px;
+    padding: 0 12px 6px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+    margin-bottom: 4px;
+  }
+  .list-col-labels span {
+    font-family: var(--font-mono); font-size: 9px;
+    letter-spacing: 2px; text-transform: uppercase; color: var(--text-dim);
+    text-align: right;
+  }
+  .list-col-labels span:nth-child(1) { text-align: center; } /* rank */
+  .list-col-labels span:nth-child(2) { text-align: center; } /* team# */
+  .list-col-labels span:nth-child(3) { text-align: left;   } /* name */
+
+  /* List rows */
+  .list-rows { flex: 1; overflow: hidden; display: flex; flex-direction: column; gap: 4px; }
+
+  .list-row {
+    display: grid;
+    grid-template-columns: 40px 50px 1fr 120px 110px 110px 110px;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    align-items: center;
+    flex-shrink: 0;
+    background: var(--surface);
+  }
+  .list-row:nth-child(odd) { background: #0c1018; }
+
+  /* Rank badge */
+  .rank-badge {
+    font-family: var(--font-head); font-size: 22px;
+    text-align: center; line-height: 1;
+  }
+  .rank-1  { color: #FFD700; }
+  .rank-2  { color: #C0C0C0; }
+  .rank-3  { color: #CD7F32; }
+  .rank-top { color: var(--win); }
+  .rank-bot { color: var(--danger); }
+
+  /* Team number */
+  .list-team-num {
+    font-family: var(--font-head); font-size: 20px; color: var(--gold);
+    text-align: center; line-height: 1;
+  }
+
+  /* Team name in list */
+  .list-team-name { display: flex; flex-direction: column; gap: 1px; overflow: hidden; }
+  .list-name-line {
+    font-family: var(--font-body); font-size: 13px; font-weight: 500; color: var(--text);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    display: flex; gap: 4px; align-items: baseline;
+  }
+  .list-name-prefix { font-family: var(--font-mono); font-size: 10px; color: var(--gold); opacity: 0.8; flex-shrink: 0; }
+
+  /* Total bets in list */
+  .list-total {
+    font-family: var(--font-mono); font-size: 18px; font-weight: 500;
+    color: var(--gold); text-align: right;
+  }
+
+  /* Odds in list */
+  .list-odds { font-family: var(--font-mono); font-size: 18px; font-weight: 500; text-align: right; }
+  .list-odds.win-odds   { color: var(--win); }
+  .list-odds.place-odds { color: var(--place); }
+  .list-odds.show-odds  { color: var(--show); }
+  .list-odds.no-bet     { color: var(--text-dim); opacity: 0.3; font-size: 14px; }
+
+  /* ── CONFIG ── */
+  #config-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 500; display: flex; align-items: center; justify-content: center; }
   #config-overlay.hidden { display: none; }
   .config-box { background: #0E1520; border: 1px solid #353c55; border-radius: 10px; padding: 32px; width: 500px; }
   .config-title { font-family: var(--font-head); font-size: 28px; color: var(--gold); margin-bottom: 8px; letter-spacing: 2px; }
@@ -145,35 +210,26 @@
   .config-field input:focus { border-color: var(--gold); }
   .btn-start { width: 100%; background: var(--gold); color: #000; font-family: var(--font-head); font-size: 22px; letter-spacing: 2px; border: none; border-radius: 6px; padding: 13px; cursor: pointer; margin-top: 6px; }
 
-  /* ── STATUS BAR ── */
   #status-bar { position: fixed; bottom: 0; left: 0; right: 0; background: #1a0a0a; border-top: 1px solid #7f1d1d; color: #ef4444; font-family: var(--font-mono); font-size: 11px; padding: 6px 16px; display: none; }
   #status-bar.visible { display: block; }
 </style>
 </head>
 <body>
 
-<!-- Config Overlay -->
 <div id="config-overlay">
   <div class="config-box">
     <div class="config-title">ODDS BOARD SETUP</div>
     <div class="config-note">
-      Proxy URL is pre-configured — just confirm event name and click Start.<br>
+      Proxy URL is pre-configured. Confirm event name and click Start.<br>
       Odds refresh every 30 seconds. Slides advance every 10 seconds.<br>
-      Press <strong>Escape</strong> or <strong>double-click</strong> anywhere to return here.
+      Press <strong>Escape</strong> or <strong>double-click</strong> to return here.
     </div>
-    <div class="config-field">
-      <label>Proxy URL</label>
-      <input type="text" id="cfg-proxy">
-    </div>
-    <div class="config-field">
-      <label>Event Name</label>
-      <input type="text" id="cfg-event">
-    </div>
+    <div class="config-field"><label>Proxy URL</label><input type="text" id="cfg-proxy"></div>
+    <div class="config-field"><label>Event Name</label><input type="text" id="cfg-event"></div>
     <button class="btn-start" onclick="startDisplay()">START DISPLAY</button>
   </div>
 </div>
 
-<!-- Header -->
 <div id="header">
   <div class="header-top">
     <div>
@@ -204,13 +260,17 @@
 var DEFAULT_PROXY = 'https://classicpari.landcreations.workers.dev';
 var DEFAULT_EVENT = 'Columbine Classic 2026';
 
+// 6 total slides: 4 flight slides + top20 + bottom20
+var TOTAL_SLIDES      = 6;
 var FLIGHTS_PER_SLIDE = 4;
 var TEAMS_PER_FLIGHT  = 6;
 var TOTAL_FLIGHTS     = 16;
-var TOTAL_SLIDES      = 4;
 var SLIDE_DURATION    = 10000;
 var REFRESH_INTERVAL  = 30000;
 var PROGRESS_INTERVAL = 50;
+
+// Slide types: 0-3 = flights, 4 = top20, 5 = bottom20
+var SLIDE_TYPES = ['flights','flights','flights','flights','top20','bottom20'];
 
 var FLIGHT_STYLES = [
   {bg:"#1A2744",border:"#6BA3E8",label:"#6BA3E8"},{bg:"#1A3320",border:"#4ADE80",label:"#4ADE80"},
@@ -233,7 +293,7 @@ var refreshTimer  = null;
 var progressTimer = null;
 var progressStart = null;
 
-function sheetsUrl(params) { return proxyUrl + '/sheets?' + params; }
+function sheetsUrl(p) { return proxyUrl + '/sheets?' + p; }
 
 // ── INIT ──────────────────────────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', function() {
@@ -246,10 +306,12 @@ window.addEventListener('DOMContentLoaded', function() {
   document.getElementById('cfg-proxy').value = proxyUrl;
   document.getElementById('cfg-event').value = eventName;
 
+  // Build dots — different colors for top20 and bottom20
   var dots = document.getElementById('slide-dots');
   for (var i = 0; i < TOTAL_SLIDES; i++) {
     var d = document.createElement('div');
-    d.className = 'dot' + (i === 0 ? ' active' : '');
+    var extra = i === 4 ? ' top20' : i === 5 ? ' bot20' : '';
+    d.className = 'dot' + extra + (i === 0 ? ' active' : '');
     d.id = 'dot-' + i;
     dots.appendChild(d);
   }
@@ -257,8 +319,8 @@ window.addEventListener('DOMContentLoaded', function() {
 });
 
 function startDisplay() {
-  proxyUrl  = document.getElementById('cfg-proxy').value.trim() || DEFAULT_PROXY;
-  eventName = document.getElementById('cfg-event').value.trim() || DEFAULT_EVENT;
+  proxyUrl  = document.getElementById('cfg-proxy').value.trim()  || DEFAULT_PROXY;
+  eventName = document.getElementById('cfg-event').value.trim()  || DEFAULT_EVENT;
   localStorage.setItem('oddsboard_cfg2', JSON.stringify({ proxy: proxyUrl, eventName: eventName }));
   document.getElementById('config-overlay').classList.add('hidden');
   document.getElementById('logo-text').textContent = eventName.toUpperCase();
@@ -286,9 +348,7 @@ async function fetchOdds() {
       updateHeader(data.pools, data.timestamp);
       renderSlide(currentSlide, getActiveEl());
       hideError();
-    } else {
-      showError('Sheet error: ' + (data.error || 'unknown'));
-    }
+    } else { showError('Sheet error: ' + (data.error || 'unknown')); }
   } catch(e) { showError('Fetch failed: ' + e.message); }
 }
 
@@ -300,30 +360,8 @@ function updateHeader(pools, ts) {
   document.getElementById('timestamp').textContent  = 'Updated: ' + ts;
 }
 
-function fmt(n) {
-  return Number(n).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
-}
-function fmtMoney(n) {
-  return '$' + Number(n).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
-}
-
-// ── NAME SPLITTING ────────────────────────────────────────────────────────
-// Splits "Bob Smith and Harry Jones" into M: Bob Smith / G: Harry Jones
-// If no " and " found, shows name as single line with no prefix
-function buildNameHTML(fullName) {
-  var lower = fullName.toLowerCase();
-  var idx   = lower.indexOf(' and ');
-  if (idx === -1) {
-    // No partner — show as single line
-    return '<div class="name-line"><span class="name-text">' + esc(fullName) + '</span></div>';
-  }
-  var person1 = fullName.substring(0, idx).trim();
-  var person2 = fullName.substring(idx + 5).trim();
-  return (
-    '<div class="name-line"><span class="name-prefix">M:</span><span class="name-text">' + esc(person1) + '</span></div>' +
-    '<div class="name-line"><span class="name-prefix">G:</span><span class="name-text">' + esc(person2) + '</span></div>'
-  );
-}
+function fmt(n)       { return Number(n).toLocaleString('en-US', {minimumFractionDigits:0,maximumFractionDigits:0}); }
+function fmtMoney(n)  { return '$' + fmt(n); }
 
 // ── SLIDESHOW ─────────────────────────────────────────────────────────────
 function startSlideshow() {
@@ -349,17 +387,26 @@ function getActiveEl() { return document.getElementById('slide-' + activeEl); }
 function updateDots(idx) {
   for (var i = 0; i < TOTAL_SLIDES; i++) {
     var d = document.getElementById('dot-' + i);
-    if (d) d.className = 'dot' + (i === idx ? ' active' : '');
+    if (!d) continue;
+    var extra = i === 4 ? ' top20' : i === 5 ? ' bot20' : '';
+    d.className = 'dot' + extra + (i === idx ? ' active' : '');
   }
 }
 
 function updateSlideLabel(idx) {
-  var sf = idx * FLIGHTS_PER_SLIDE + 1;
-  var ef = sf + FLIGHTS_PER_SLIDE - 1;
-  var st = (idx * FLIGHTS_PER_SLIDE * TEAMS_PER_FLIGHT) + 1;
-  var et = st + (FLIGHTS_PER_SLIDE * TEAMS_PER_FLIGHT) - 1;
-  document.getElementById('slide-label').textContent =
-    'FLIGHTS ' + sf + '–' + ef + '   |   TEAMS ' + st + '–' + et;
+  var type = SLIDE_TYPES[idx];
+  if (type === 'top20') {
+    document.getElementById('slide-label').textContent = 'HOT TEAMS — TOP 20 BY TOTAL BETS';
+  } else if (type === 'bottom20') {
+    document.getElementById('slide-label').textContent = 'VALUE HUNT — BOTTOM 20 BY TOTAL BETS';
+  } else {
+    var sf = idx * FLIGHTS_PER_SLIDE + 1;
+    var ef = sf + FLIGHTS_PER_SLIDE - 1;
+    var st = (idx * FLIGHTS_PER_SLIDE * TEAMS_PER_FLIGHT) + 1;
+    var et = st + (FLIGHTS_PER_SLIDE * TEAMS_PER_FLIGHT) - 1;
+    document.getElementById('slide-label').textContent =
+      'FLIGHTS ' + sf + '–' + ef + '   |   TEAMS ' + st + '–' + et;
+  }
 }
 
 // ── PROGRESS BAR ──────────────────────────────────────────────────────────
@@ -378,19 +425,31 @@ function startProgress() {
 // ── RENDER SLIDE ──────────────────────────────────────────────────────────
 function renderSlide(slideIdx, container) {
   container.innerHTML = '';
-  var startFlight = slideIdx * FLIGHTS_PER_SLIDE;
+  var type = SLIDE_TYPES[slideIdx];
+  if (type === 'top20') {
+    renderListSlide(container, 'top');
+  } else if (type === 'bottom20') {
+    renderListSlide(container, 'bottom');
+  } else {
+    renderFlightSlide(container, slideIdx);
+  }
+}
 
+// ── FLIGHT SLIDE ──────────────────────────────────────────────────────────
+function renderFlightSlide(container, slideIdx) {
+  var wrap = document.createElement('div');
+  wrap.className = 'flight-slide';
+
+  var startFlight = slideIdx * FLIGHTS_PER_SLIDE;
   for (var f = 0; f < FLIGHTS_PER_SLIDE; f++) {
     var flightIdx = startFlight + f;
     if (flightIdx >= TOTAL_FLIGHTS) break;
-
     var flightNum = flightIdx + 1;
     var style     = FLIGHT_STYLES[flightIdx];
 
     var block = document.createElement('div');
     block.className = 'flight-block';
 
-    // Flight label
     var label = document.createElement('div');
     label.className = 'flight-label';
     label.style.background  = style.bg;
@@ -398,7 +457,6 @@ function renderSlide(slideIdx, container) {
     label.style.color       = style.label;
     label.innerHTML = '<span class="fl-word">FLIGHT</span><span class="fl-num">' + flightNum + '</span>';
 
-    // Teams row
     var teamsRow = document.createElement('div');
     teamsRow.className = 'teams-row';
 
@@ -412,52 +470,122 @@ function renderSlide(slideIdx, container) {
       box.style.background  = style.bg;
       box.style.borderColor = style.border;
 
-      // Top section
       var top = document.createElement('div');
       top.className = 'team-top';
       top.innerHTML =
-        '<div class="team-num">#' + String(teamNum).padStart(2, '0') + '</div>' +
-        '<div class="team-names">' + buildNameHTML(team.name) + '</div>' +
+        '<div class="team-num">#' + String(teamNum).padStart(2,'0') + '</div>' +
+        '<div class="team-names">' + buildNameHTML(team.name, 'name-prefix', 'name-text', 'name-line') + '</div>' +
         '<div class="team-total">' +
-          (noBets
-            ? '<span style="opacity:0.3;font-size:12px">No bets yet</span>'
-            : 'Bets: <span>' + fmtMoney(team.total) + '</span>'
-          ) +
+          (noBets ? '<span style="opacity:0.3;font-size:12px">No bets yet</span>'
+                  : 'Bets: <span>' + fmtMoney(team.total) + '</span>') +
         '</div>';
 
-      // Odds row
       var oddsRow = document.createElement('div');
       oddsRow.className = 'odds-row';
       oddsRow.style.borderColor = style.border;
       oddsRow.innerHTML =
-        '<div class="odds-cell win-cell'   + (!team.winBets   ? ' no-bets' : '') + '" style="border-color:' + style.border + '">' +
-          '<span class="odds-label">Win</span>' +
-          '<span class="odds-val">' + (!team.winBets   ? '—' : esc(team.winOdds))   + '</span>' +
-        '</div>' +
-        '<div class="odds-cell place-cell' + (!team.placeBets ? ' no-bets' : '') + '" style="border-color:' + style.border + '">' +
-          '<span class="odds-label">Place</span>' +
-          '<span class="odds-val">' + (!team.placeBets ? '—' : esc(team.placeOdds)) + '</span>' +
-        '</div>' +
-        '<div class="odds-cell show-cell'  + (!team.showBets  ? ' no-bets' : '') + '">' +
-          '<span class="odds-label">Show</span>' +
-          '<span class="odds-val">' + (!team.showBets  ? '—' : esc(team.showOdds))  + '</span>' +
-        '</div>';
+        '<div class="odds-cell win-cell'   + (!team.winBets   ? ' no-bets':'') + '" style="border-color:'+style.border+'">' +
+          '<span class="odds-label">Win</span><span class="odds-val">'   + (!team.winBets   ? '—' : esc(team.winOdds))   + '</span></div>' +
+        '<div class="odds-cell place-cell' + (!team.placeBets ? ' no-bets':'') + '" style="border-color:'+style.border+'">' +
+          '<span class="odds-label">Place</span><span class="odds-val">' + (!team.placeBets ? '—' : esc(team.placeOdds)) + '</span></div>' +
+        '<div class="odds-cell show-cell'  + (!team.showBets  ? ' no-bets':'') + '">' +
+          '<span class="odds-label">Show</span><span class="odds-val">'  + (!team.showBets  ? '—' : esc(team.showOdds))  + '</span></div>';
 
-      box.appendChild(top);
-      box.appendChild(oddsRow);
-      teamsRow.appendChild(box);
+      box.appendChild(top); box.appendChild(oddsRow); teamsRow.appendChild(box);
     }
-
-    block.appendChild(label);
-    block.appendChild(teamsRow);
-    container.appendChild(block);
+    block.appendChild(label); block.appendChild(teamsRow); wrap.appendChild(block);
   }
+  container.appendChild(wrap);
 }
 
-// ── HELPERS ───────────────────────────────────────────────────────────────
+// ── LIST SLIDE (top20 / bottom20) ─────────────────────────────────────────
+function renderListSlide(container, mode) {
+  if (!oddsData || !oddsData.teams) {
+    container.innerHTML = '<div style="color:var(--text-dim);font-family:var(--font-mono);padding:40px;text-align:center">Loading data…</div>';
+    return;
+  }
+
+  // Sort all teams by total bets
+  var sorted = oddsData.teams.slice().sort(function(a, b) { return b.total - a.total; });
+  var teams  = mode === 'top' ? sorted.slice(0, 20) : sorted.slice(-20).reverse();
+
+  var wrap = document.createElement('div');
+  wrap.className = 'list-slide';
+
+  // Header bar
+  var hdr = document.createElement('div');
+  hdr.className = 'list-header ' + (mode === 'top' ? 'top' : 'bottom');
+  hdr.innerHTML =
+    '<div class="list-header-title">' +
+      (mode === 'top' ? '🔥 TOP 20 — MOST BET TEAMS' : '💎 BOTTOM 20 — LEAST BET TEAMS') +
+    '</div>' +
+    '<div class="list-header-sub" style="margin-left:auto">' +
+      (mode === 'top' ? 'Favorites · Sorted by total wagered ↓' : 'Long shots · Sorted by total wagered ↑') +
+    '</div>';
+  wrap.appendChild(hdr);
+
+  // Column labels
+  var colLabels = document.createElement('div');
+  colLabels.className = 'list-col-labels';
+  colLabels.innerHTML =
+    '<span>Rank</span><span>Team</span><span>Name</span>' +
+    '<span>Total Bets</span><span>Win Odds</span><span>Place Odds</span><span>Show Odds</span>';
+  wrap.appendChild(colLabels);
+
+  // Rows
+  var rowsWrap = document.createElement('div');
+  rowsWrap.className = 'list-rows';
+
+  teams.forEach(function(team, i) {
+    var globalRank = mode === 'top' ? (i + 1) : (oddsData.teams.length - 19 + i);
+    var rankClass  = i === 0 ? 'rank-1' : i === 1 ? 'rank-2' : i === 2 ? 'rank-3'
+                   : mode === 'top' ? 'rank-top' : 'rank-bot';
+    var noBets     = !team.winBets && !team.placeBets && !team.showBets;
+
+    var row = document.createElement('div');
+    row.className = 'list-row';
+    row.innerHTML =
+      // Rank
+      '<div class="rank-badge ' + rankClass + '">' + (i + 1) + '</div>' +
+      // Team #
+      '<div class="list-team-num">#' + String(team.num).padStart(2,'0') + '</div>' +
+      // Name
+      '<div class="list-team-name">' +
+        buildNameHTML(team.name, 'list-name-prefix', 'name-text', 'list-name-line') +
+      '</div>' +
+      // Total bets
+      '<div class="list-total">' + (noBets ? '<span style="opacity:0.3">$0</span>' : fmtMoney(team.total)) + '</div>' +
+      // Win odds
+      '<div class="list-odds win-odds'   + (!team.winBets   ? ' no-bet':'') + '">' + (!team.winBets   ? '—' : esc(team.winOdds))   + '</div>' +
+      // Place odds
+      '<div class="list-odds place-odds' + (!team.placeBets ? ' no-bet':'') + '">' + (!team.placeBets ? '—' : esc(team.placeOdds)) + '</div>' +
+      // Show odds
+      '<div class="list-odds show-odds'  + (!team.showBets  ? ' no-bet':'') + '">' + (!team.showBets  ? '—' : esc(team.showOdds))  + '</div>';
+
+    rowsWrap.appendChild(row);
+  });
+
+  wrap.appendChild(rowsWrap);
+  container.appendChild(wrap);
+}
+
+// ── NAME HELPERS ──────────────────────────────────────────────────────────
+function buildNameHTML(fullName, prefixClass, textClass, lineClass) {
+  var lower = fullName.toLowerCase();
+  var idx   = lower.indexOf(' and ');
+  if (idx === -1) {
+    return '<div class="' + lineClass + '"><span class="' + textClass + '">' + esc(fullName) + '</span></div>';
+  }
+  var p1 = fullName.substring(0, idx).trim();
+  var p2 = fullName.substring(idx + 5).trim();
+  return (
+    '<div class="' + lineClass + '"><span class="' + prefixClass + '">M:</span><span class="' + textClass + '">' + esc(p1) + '</span></div>' +
+    '<div class="' + lineClass + '"><span class="' + prefixClass + '">G:</span><span class="' + textClass + '">' + esc(p2) + '</span></div>'
+  );
+}
+
 function getTeamData(num) {
-  var empty = { name: 'Team ' + num, winOdds: '—', placeOdds: '—', showOdds: '—',
-                winBets: 0, placeBets: 0, showBets: 0, total: 0 };
+  var empty = {name:'Team '+num, winOdds:'—', placeOdds:'—', showOdds:'—', winBets:0, placeBets:0, showBets:0, total:0};
   if (!oddsData || !oddsData.teams) return empty;
   for (var i = 0; i < oddsData.teams.length; i++) {
     if (oddsData.teams[i].num === num) return oddsData.teams[i];
@@ -466,18 +594,11 @@ function getTeamData(num) {
 }
 
 function esc(s) {
-  return String(s)
-    .replace(/&/g, '&amp;').replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-function showError(msg) {
-  var b = document.getElementById('status-bar');
-  b.textContent = '⚠ ' + msg; b.classList.add('visible');
-}
-function hideError() {
-  document.getElementById('status-bar').classList.remove('visible');
-}
+function showError(msg) { var b=document.getElementById('status-bar'); b.textContent='⚠ '+msg; b.classList.add('visible'); }
+function hideError()    { document.getElementById('status-bar').classList.remove('visible'); }
 </script>
 </body>
 </html>
