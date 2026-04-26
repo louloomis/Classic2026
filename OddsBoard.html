@@ -396,9 +396,9 @@ function updateDots(idx) {
 function updateSlideLabel(idx) {
   var type = SLIDE_TYPES[idx];
   if (type === 'top20') {
-    document.getElementById('slide-label').textContent = 'HOT TEAMS — TOP 20 BY TOTAL BETS';
+    document.getElementById('slide-label').textContent = 'MOST WAGERED TEAMS';
   } else if (type === 'bottom20') {
-    document.getElementById('slide-label').textContent = 'VALUE HUNT — BOTTOM 20 BY TOTAL BETS';
+    document.getElementById('slide-label').textContent = 'VALUE HUNT — LEAST WAGERED TEAMS';
   } else {
     var sf = idx * FLIGHTS_PER_SLIDE + 1;
     var ef = sf + FLIGHTS_PER_SLIDE - 1;
