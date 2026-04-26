@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Columbine Classic 2026 - Pari-Mutuels</title>
+<title>Columbine Classic 2026 — Wagering</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -64,8 +64,8 @@
     font-family: var(--font-mono); font-size: 11px; color: var(--text-dim);
     display: flex; align-items: center; justify-content: space-between; gap: 12px;
   }
-  #names-status.loaded  { border-color: var(--win-dim); color: var(--win); }
-  #names-status.error   { border-color: var(--danger);  color: var(--danger); }
+  #names-status.loaded { border-color: var(--win-dim); color: var(--win); }
+  #names-status.error  { border-color: var(--danger);  color: var(--danger); }
   .btn-reload-names {
     background: transparent; border: 1px solid currentColor;
     border-radius: 4px; color: inherit; font-family: var(--font-mono);
@@ -77,7 +77,7 @@
   /* ── HEADER ── */
   header { border-bottom: 1px solid var(--border); padding-bottom: 16px; margin-bottom: 24px; }
   .logo-top {
-    font-family: var(--font-head); font-size: 44px; letter-spacing: 2px;
+    font-family: var(--font-head); font-size: 36px; letter-spacing: 2px;
     color: var(--gold); text-shadow: 0 0 40px rgba(240,180,41,0.25); line-height: 1;
   }
   .logo-sub {
@@ -217,11 +217,11 @@
     text-align: right; color: var(--text-mid);
   }
   .summary-table td:first-child { text-align: left; }
-  .td-team  { color: var(--gold)      !important; }
-  .td-name  { color: var(--text-mid)  !important; font-size: 11px !important; }
-  .td-win   { color: var(--win)       !important; }
-  .td-place { color: var(--place)     !important; }
-  .td-show  { color: var(--show)      !important; }
+  .td-team  { color: var(--gold)     !important; }
+  .td-name  { color: var(--text-mid) !important; font-size: 11px !important; }
+  .td-win   { color: var(--win)      !important; }
+  .td-place { color: var(--place)    !important; }
+  .td-show  { color: var(--show)     !important; }
   .summary-table tfoot td { border-bottom: none; padding-top: 10px; font-size: 13px; color: var(--text); }
   .summary-table tfoot td:first-child { color: var(--text-dim); }
 
@@ -295,8 +295,6 @@
     background: var(--surface2); border-radius: 4px;
     padding: 12px 14px; margin-bottom: 18px; font-family: var(--font-mono);
   }
-  .modal-note strong { color: var(--text-mid); }
-  .modal-note code { background: var(--bg); padding: 1px 5px; border-radius: 3px; color: var(--gold); }
   .modal-fields { display: flex; flex-direction: column; gap: 12px; margin-bottom: 18px; }
   .modal-btns { display: flex; gap: 10px; justify-content: flex-end; align-items: center; }
   .btn-save {
@@ -339,8 +337,8 @@
 
 <div id="app">
   <header>
-    <div class="logo-top">Columbine Classic 2026</div>
-    <div class="logo-sub">Pari-Mutuel Wagering System</div>
+    <div class="logo-top">COLUMBINE CLASSIC</div>
+    <div class="logo-sub">Pari-Mutuel Wagering — 2026</div>
   </header>
 
   <div id="setup-banner">
@@ -348,7 +346,7 @@
   </div>
 
   <div id="names-status">
-    <span id="names-status-text">⏳ Team names not loaded yet</span>
+    <span id="names-status-text">⏳ Loading team names…</span>
     <button class="btn-reload-names" onclick="fetchTeamNames()">↻ RELOAD NAMES</button>
   </div>
 
@@ -426,30 +424,23 @@
 <div id="config-modal">
   <div class="modal-box">
     <div class="modal-title">CONFIGURATION</div>
-    <div class="modal-note">
-      <strong>Step 1:</strong> In your Google Sheet → <code>Extensions → Apps Script</code><br>
-      <strong>Step 2:</strong> Paste <code>AppsScript_WagerReceiver.js</code> code → Save<br>
-      <strong>Step 3:</strong> <code>Deploy → New deployment → Web app → Anyone → Deploy</code><br>
-      <strong>Step 4:</strong> Copy the Web App URL and paste below<br><br>
-      Saved to localStorage on this device only.
-    </div>
+    <div class="modal-note">Credentials are saved to localStorage on this device only.</div>
     <div class="modal-fields">
       <div class="field">
         <label>Apps Script Web App URL *</label>
-        <input type="text" id="cfg-script-url"
-          placeholder="https://script.google.com/macros/s/ABC.../exec">
+        <input type="text" id="cfg-script-url">
       </div>
       <div class="field">
-        <label>Twilio Proxy URL <span style="color:var(--text-dim);font-weight:300">(optional)</span></label>
-        <input type="text" id="cfg-twilio-url" placeholder="https://your-worker.workers.dev">
+        <label>Twilio Proxy URL</label>
+        <input type="text" id="cfg-twilio-url">
       </div>
       <div class="field">
         <label>From Phone Number</label>
-        <input type="text" id="cfg-from-phone" placeholder="+13035550100">
+        <input type="text" id="cfg-from-phone">
       </div>
       <div class="field">
         <label>Event Name</label>
-        <input type="text" id="cfg-event-name" placeholder="Columbine Classic 2026">
+        <input type="text" id="cfg-event-name">
       </div>
     </div>
     <div class="modal-btns">
@@ -463,28 +454,40 @@
 <div id="toast"></div>
 
 <script>
-// ── CONFIG ────────────────────────────────────────────────────────────────
-let cfg = {
-  scriptUrl:  'https://script.google.com/macros/s/AKfycbwsCtyqLTFsxV3sEPjOTOSri2Gm2zn933upfs0QT4ACEAN_qhyQb-aWuRijDZPIz7G3EQ/exec',
-  twilioUrl:  'https://classicpari.landcreations.workers.dev',
-  fromPhone:  '+17205752284',
-  eventName:  'Columbine Classic 2026'
+// ── HARDCODED DEFAULTS ────────────────────────────────────────────────────
+var DEFAULTS = {
+  scriptUrl: 'https://script.google.com/macros/s/AKfycbwsCtyqLTFsxV3sEPjOTOSri2Gm2zn933upfs0QT4ACEAN_qhyQb-aWuRijDZPIz7G3EQ/exec',
+  twilioUrl: 'https://classicpari.landcreations.workers.dev',
+  fromPhone: '+17205752284',
+  eventName: 'Columbine Classic 2026 - Pari-Mutuels'
 };
 
+// ── CONFIG ────────────────────────────────────────────────────────────────
+var cfg = Object.assign({}, DEFAULTS);
+
 function loadConfig() {
-  try { Object.assign(cfg, JSON.parse(localStorage.getItem('wagering_config') || '{}')); } catch(e) {}
+  try {
+    var saved = JSON.parse(localStorage.getItem('wagering_config') || '{}');
+    // Only override defaults if user has explicitly saved something
+    if (saved.scriptUrl) cfg.scriptUrl = saved.scriptUrl;
+    if (saved.twilioUrl) cfg.twilioUrl = saved.twilioUrl;
+    if (saved.fromPhone) cfg.fromPhone = saved.fromPhone;
+    if (saved.eventName) cfg.eventName = saved.eventName;
+  } catch(e) {}
 }
+
 function saveConfig() {
-  cfg.scriptUrl = document.getElementById('cfg-script-url').value.trim();
-  cfg.twilioUrl = document.getElementById('cfg-twilio-url').value.trim();
-  cfg.fromPhone = document.getElementById('cfg-from-phone').value.trim();
-  cfg.eventName = document.getElementById('cfg-event-name').value.trim() || 'Race Day';
+  cfg.scriptUrl = document.getElementById('cfg-script-url').value.trim() || DEFAULTS.scriptUrl;
+  cfg.twilioUrl = document.getElementById('cfg-twilio-url').value.trim() || DEFAULTS.twilioUrl;
+  cfg.fromPhone = document.getElementById('cfg-from-phone').value.trim() || DEFAULTS.fromPhone;
+  cfg.eventName = document.getElementById('cfg-event-name').value.trim() || DEFAULTS.eventName;
   localStorage.setItem('wagering_config', JSON.stringify(cfg));
   closeConfig();
   updateConfigStatus();
-  if (cfg.scriptUrl) fetchTeamNames();
+  fetchTeamNames();
   toast('Config saved', 'success');
 }
+
 function openConfig() {
   loadConfig();
   document.getElementById('cfg-script-url').value = cfg.scriptUrl;
@@ -493,13 +496,14 @@ function openConfig() {
   document.getElementById('cfg-event-name').value = cfg.eventName;
   document.getElementById('config-modal').classList.add('open');
 }
-function closeConfig() { document.getElementById('config-modal').classList.remove('open'); }
-document.getElementById('config-modal').addEventListener('click', e => {
-  if (e.target.id === 'config-modal') closeConfig();
-});
+
+function closeConfig() {
+  document.getElementById('config-modal').classList.remove('open');
+}
+
 function updateConfigStatus() {
-  const btn    = document.getElementById('config-btn');
-  const banner = document.getElementById('setup-banner');
+  var btn    = document.getElementById('config-btn');
+  var banner = document.getElementById('setup-banner');
   if (cfg.scriptUrl) {
     btn.classList.add('configured');
     btn.textContent = '✓ CONFIGURED';
@@ -510,61 +514,59 @@ function updateConfigStatus() {
     banner.classList.add('visible');
   }
 }
+
+document.getElementById('config-modal').addEventListener('click', function(e) {
+  if (e.target.id === 'config-modal') closeConfig();
+});
+
 async function testConnection() {
-  const url = document.getElementById('cfg-script-url').value.trim();
+  var url = document.getElementById('cfg-script-url').value.trim();
   if (!url) { toast('Enter Apps Script URL first', 'error'); return; }
   toast('Testing…', 'info');
   try {
-    const res  = await fetch(url);
-    const data = await res.json();
+    var res  = await fetch(url, { redirect: 'follow' });
+    var data = await res.json();
     if (data.status) toast('✓ Connected: ' + data.status, 'success');
     else toast('Unexpected response — check URL', 'error');
   } catch(e) { toast('Could not reach URL: ' + e.message, 'error'); }
 }
 
 // ── TEAM NAMES ────────────────────────────────────────────────────────────
-const teamNames = {};   // { 1: "Blue Thunder", 2: "Red Rocket", ... }
+var teamNames = {};
 
 async function fetchTeamNames() {
   if (!cfg.scriptUrl) return;
-
   setNamesStatus('loading', '⏳ Loading team names…');
-
   try {
-    const res  = await fetch(cfg.scriptUrl + '?action=getTeams');
-    const data = await res.json();
-
+    var res  = await fetch(cfg.scriptUrl + '?action=getTeams', { redirect: 'follow' });
+    var data = await res.json();
     if (data.success && data.teams && data.teams.length) {
-      data.teams.forEach(t => { teamNames[t.num] = t.name; });
-
-      // Refresh any name tags already visible on screen
-      document.querySelectorAll('.team-name-tag').forEach(tag => {
-        const id  = tag.dataset.rowId;
-        const num = parseInt(document.getElementById('team-' + id)?.value);
+      data.teams.forEach(function(t) { teamNames[t.num] = t.name; });
+      // Refresh any visible name tags
+      document.querySelectorAll('.team-name-tag').forEach(function(tag) {
+        var id  = tag.dataset.rowId;
+        var num = parseInt(document.getElementById('team-' + id) && document.getElementById('team-' + id).value);
         if (num >= 1 && num <= 96) {
-          const name = teamNames[num] || ('Team ' + num);
-          tag.textContent = name;
+          tag.textContent = getTeamName(num);
           tag.classList.add('visible');
         }
       });
-
       setNamesStatus('loaded', '✓ ' + data.teams.length + ' team names loaded');
       updateSummary();
     } else {
       setNamesStatus('error', '✗ ' + (data.error || 'No teams returned'));
     }
   } catch(e) {
-    setNamesStatus('error', '✗ Failed to load names: ' + e.message);
+    setNamesStatus('error', '✗ Failed: ' + e.message);
   }
 }
 
 function setNamesStatus(state, msg) {
-  const el = document.getElementById('names-status');
-  const tx = document.getElementById('names-status-text');
-  el.className = state === 'loaded' ? 'loaded' : state === 'error' ? 'error' : '';
-  // prefix id to keep base styles
+  var el = document.getElementById('names-status');
+  var tx = document.getElementById('names-status-text');
+  el.className = '';
   el.id = 'names-status';
-  el.classList.add(state);
+  if (state !== 'loading') el.classList.add(state);
   tx.textContent = msg;
 }
 
@@ -573,13 +575,14 @@ function getTeamName(num) {
 }
 
 // ── ROWS ──────────────────────────────────────────────────────────────────
-let rowCount = 0;
+var rowCount = 0;
 
-function addRow(autoFocus = true) {
-  const id   = ++rowCount;
-  const wrap = document.getElementById('bet-rows');
+function addRow(autoFocus) {
+  if (autoFocus === undefined) autoFocus = true;
+  var id   = ++rowCount;
+  var wrap = document.getElementById('bet-rows');
 
-  const row = document.createElement('div');
+  var row = document.createElement('div');
   row.className = 'bet-row';
   row.id = 'row-' + id;
   row.innerHTML =
@@ -601,7 +604,7 @@ function addRow(autoFocus = true) {
   });
   document.getElementById('show-' + id).addEventListener('keydown', function(e) {
     if (e.key === 'Tab' && !e.shiftKey) {
-      const all = document.querySelectorAll('.bet-row');
+      var all = document.querySelectorAll('.bet-row');
       if (all[all.length - 1].id === 'row-' + id) { e.preventDefault(); addRow(true); }
     }
   });
@@ -611,7 +614,7 @@ function addRow(autoFocus = true) {
 }
 
 function removeRow(id) {
-  const allRows = document.querySelectorAll('.bet-row');
+  var allRows = document.querySelectorAll('.bet-row');
   if (allRows.length === 1) {
     document.getElementById('team-' + id).value = '';
     document.getElementById('team-' + id).className = 'inp-team';
@@ -630,7 +633,6 @@ function onTeamInput(id) {
   var inp = document.getElementById('team-' + id);
   var tag = document.getElementById('teamname-' + id);
   var v   = parseInt(inp.value);
-
   if (!inp.value) {
     inp.className = 'inp-team';
     tag.textContent = ''; tag.classList.remove('visible');
@@ -722,34 +724,23 @@ async function submitWager() {
   var ts    = new Date().toLocaleString();
   var sheetOk = false, smsStatus = 'skipped';
 
-  // ── POST to Apps Script via GET with encoded payload ──────────────
-  if (cfg.scriptUrl) {
-    try {
-      var payload = {
-        bettorName: name,
-        phone:      phone,
-        bets:       bets,
-        betId:      betId,
-        timestamp:  ts
-      };
-      var encodedPayload = encodeURIComponent(JSON.stringify(payload));
-      var url = cfg.scriptUrl + '?action=submitBet&payload=' + encodedPayload;
-      var res  = await fetch(url);
-      var data = await res.json();
-      if (data.success) {
-        sheetOk = true;
-      } else {
-        toast('Sheet error: ' + (data.error || 'unknown'), 'error');
-      }
-    } catch(e) {
-      toast('Submit failed: ' + e.message, 'error');
+  // ── POST to Apps Script via GET with encoded payload ──
+  try {
+    var payload      = { bettorName: name, phone: phone, bets: bets, betId: betId, timestamp: ts };
+    var encodedPayload = encodeURIComponent(JSON.stringify(payload));
+    var url  = cfg.scriptUrl + '?action=submitBet&payload=' + encodedPayload;
+    var res  = await fetch(url, { redirect: 'follow' });
+    var data = await res.json();
+    if (data.success) {
+      sheetOk = true;
+    } else {
+      toast('Sheet error: ' + (data.error || 'unknown'), 'error');
     }
-  } else {
-    sheetOk = true;
-    toast('Demo mode — configure Apps Script URL in ⚙ Config', 'info');
+  } catch(e) {
+    toast('Submit failed: ' + e.message, 'error');
   }
 
-  // ── SMS via Twilio proxy ──────────────────────────────────────────
+  // ── SMS via Twilio proxy ──
   if (phone && cfg.twilioUrl) {
     try {
       var lines = bets.map(function(b) {
@@ -760,7 +751,8 @@ async function submitWager() {
       var msg = '🏆 ' + cfg.eventName + '\nBettor: ' + name + '\nRef: ' + betId +
                 '\n\n' + lines + '\n\nTOTAL: $' + total.toFixed(2) + '\nGood luck!';
       var smsRes = await fetch(cfg.twilioUrl, {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ to: normalizePhone(phone), from: cfg.fromPhone, body: msg })
       });
       smsStatus = smsRes.ok ? 'sent' : 'failed';
@@ -839,7 +831,7 @@ document.addEventListener('DOMContentLoaded', function() {
   updateConfigStatus();
   addRow(false);
   document.getElementById('bettor-name').focus();
-  if (cfg.scriptUrl) fetchTeamNames();
+  fetchTeamNames();
 });
 </script>
 </body>
