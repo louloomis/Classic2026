@@ -7,7 +7,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
   :root {
     --bg:        #0d0f14;
     --surface:   #151820;
@@ -33,7 +32,6 @@
     --font-mono: 'DM Mono', monospace;
     --font-body: 'DM Sans', sans-serif;
   }
-
   html, body {
     background: var(--bg); color: var(--text);
     font-family: var(--font-body); min-height: 100vh; font-size: 14px;
@@ -43,21 +41,9 @@
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
     pointer-events: none; z-index: 0; opacity: 0.4;
   }
-
-  #app {
-    position: relative; z-index: 1;
-    max-width: 700px; margin: 0 auto; padding: 28px 16px 80px;
-  }
+  #app { position: relative; z-index: 1; max-width: 700px; margin: 0 auto; padding: 28px 16px 80px; }
 
   /* ── BANNERS ── */
-  #setup-banner {
-    background: #1a1200; border: 1px solid var(--gold);
-    border-radius: var(--radius); padding: 12px 16px; margin-bottom: 16px;
-    font-family: var(--font-mono); font-size: 11px; color: var(--gold);
-    line-height: 1.7; display: none;
-  }
-  #setup-banner.visible { display: block; }
-
   #names-status {
     background: var(--surface2); border: 1px solid var(--border2);
     border-radius: var(--radius); padding: 9px 14px; margin-bottom: 20px;
@@ -66,13 +52,12 @@
   }
   #names-status.loaded { border-color: var(--win-dim); color: var(--win); }
   #names-status.error  { border-color: var(--danger);  color: var(--danger); }
-  .btn-reload-names {
+  .btn-reload {
     background: transparent; border: 1px solid currentColor;
     border-radius: 4px; color: inherit; font-family: var(--font-mono);
     font-size: 10px; letter-spacing: 1px; padding: 3px 9px;
     cursor: pointer; white-space: nowrap; flex-shrink: 0;
   }
-  .btn-reload-names:hover { opacity: 0.75; }
 
   /* ── HEADER ── */
   header { border-bottom: 1px solid var(--border); padding-bottom: 16px; margin-bottom: 24px; }
@@ -84,7 +69,6 @@
     font-family: var(--font-mono); font-size: 11px; letter-spacing: 4px;
     color: var(--text-dim); text-transform: uppercase; margin-top: 2px;
   }
-
   .section-label {
     font-family: var(--font-mono); font-size: 10px; letter-spacing: 3px;
     text-transform: uppercase; color: var(--text-dim); margin-bottom: 10px;
@@ -117,24 +101,16 @@
     letter-spacing: 2px; text-transform: uppercase; text-align: center;
   }
   .bet-cols-header span:first-child { text-align: left; color: var(--text-dim); }
-  .lbl-win   { color: var(--win); }
-  .lbl-place { color: var(--place); }
-  .lbl-show  { color: var(--show); }
+  .lbl-win { color: var(--win); } .lbl-place { color: var(--place); } .lbl-show { color: var(--show); }
 
   /* ── BET ROWS ── */
   #bet-rows { display: flex; flex-direction: column; gap: 10px; margin-bottom: 10px; }
-
   .bet-row {
     display: grid; grid-template-columns: 130px 1fr 1fr 1fr 38px;
     gap: 8px; align-items: start; animation: rowIn 0.16s ease;
   }
-  @keyframes rowIn {
-    from { opacity: 0; transform: translateY(-5px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
+  @keyframes rowIn { from { opacity:0; transform:translateY(-5px); } to { opacity:1; transform:translateY(0); } }
   .team-cell { display: flex; flex-direction: column; gap: 3px; }
-
   .inp-team {
     background: var(--surface); border: 1px solid var(--border2);
     border-radius: var(--radius); color: var(--text);
@@ -143,12 +119,10 @@
     width: 100%; text-align: center; transition: border-color 0.15s;
     -moz-appearance: textfield;
   }
-  .inp-team::-webkit-outer-spin-button,
-  .inp-team::-webkit-inner-spin-button { -webkit-appearance: none; }
-  .inp-team:focus   { border-color: var(--gold); }
-  .inp-team.valid   { border-color: var(--gold); color: var(--gold); }
+  .inp-team::-webkit-outer-spin-button, .inp-team::-webkit-inner-spin-button { -webkit-appearance: none; }
+  .inp-team:focus { border-color: var(--gold); }
+  .inp-team.valid { border-color: var(--gold); color: var(--gold); }
   .inp-team.invalid { border-color: var(--danger); color: var(--danger); }
-
   .team-name-tag {
     font-family: var(--font-mono); font-size: 10px; color: var(--gold);
     text-align: center; min-height: 14px; letter-spacing: 0.5px;
@@ -156,24 +130,16 @@
     opacity: 0; transition: opacity 0.2s;
   }
   .team-name-tag.visible { opacity: 1; }
-
   .inp-amt {
-    background: var(--surface); border-radius: var(--radius);
-    color: var(--text); font-family: var(--font-mono);
-    font-size: 14px; padding: 10px 8px; outline: none;
-    width: 100%; text-align: center; transition: border-color 0.15s;
-    -moz-appearance: textfield;
+    background: var(--surface); border-radius: var(--radius); color: var(--text);
+    font-family: var(--font-mono); font-size: 14px; padding: 10px 8px; outline: none;
+    width: 100%; text-align: center; transition: border-color 0.15s; -moz-appearance: textfield;
   }
-  .inp-amt::-webkit-outer-spin-button,
-  .inp-amt::-webkit-inner-spin-button { -webkit-appearance: none; }
-
+  .inp-amt::-webkit-outer-spin-button, .inp-amt::-webkit-inner-spin-button { -webkit-appearance: none; }
   .inp-win   { border: 1px solid var(--win-dim);   background: var(--win-bg)   !important; }
   .inp-place { border: 1px solid var(--place-dim); background: var(--place-bg) !important; }
   .inp-show  { border: 1px solid var(--show-dim);  background: var(--show-bg)  !important; }
-  .inp-win:focus   { border-color: var(--win); }
-  .inp-place:focus { border-color: var(--place); }
-  .inp-show:focus  { border-color: var(--show); }
-
+  .inp-win:focus { border-color: var(--win); } .inp-place:focus { border-color: var(--place); } .inp-show:focus { border-color: var(--show); }
   .btn-remove {
     width: 32px; height: 32px; border-radius: 50%;
     border: 1px solid var(--border2); background: transparent;
@@ -194,7 +160,6 @@
   }
   .btn-add-row:hover { border-color: var(--gold); color: var(--gold); }
   .btn-add-row .plus { font-size: 22px; line-height: 1; font-weight: 300; }
-
   hr.divider { border: none; border-top: 1px solid var(--border); margin: 0 0 20px; }
 
   /* ── SUMMARY ── */
@@ -203,7 +168,6 @@
   .summary-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; }
   .summary-title { font-family: var(--font-head); font-size: 20px; letter-spacing: 1px; color: var(--gold); }
   .summary-grand { font-family: var(--font-mono); font-size: 18px; color: var(--gold); }
-
   .summary-table { width: 100%; border-collapse: collapse; }
   .summary-table th {
     font-family: var(--font-mono); font-size: 9px; letter-spacing: 2px;
@@ -217,11 +181,8 @@
     text-align: right; color: var(--text-mid);
   }
   .summary-table td:first-child { text-align: left; }
-  .td-team  { color: var(--gold)     !important; }
-  .td-name  { color: var(--text-mid) !important; font-size: 11px !important; }
-  .td-win   { color: var(--win)      !important; }
-  .td-place { color: var(--place)    !important; }
-  .td-show  { color: var(--show)     !important; }
+  .td-team { color: var(--gold) !important; } .td-name { color: var(--text-mid) !important; font-size: 11px !important; }
+  .td-win { color: var(--win) !important; } .td-place { color: var(--place) !important; } .td-show { color: var(--show) !important; }
   .summary-table tfoot td { border-bottom: none; padding-top: 10px; font-size: 13px; color: var(--text); }
   .summary-table tfoot td:first-child { color: var(--text-dim); }
 
@@ -239,8 +200,7 @@
   /* ── RECEIPT MODAL ── */
   #receipt-modal {
     display: none; position: fixed; inset: 0;
-    background: rgba(0,0,0,0.85); z-index: 300;
-    align-items: center; justify-content: center;
+    background: rgba(0,0,0,0.85); z-index: 300; align-items: center; justify-content: center;
   }
   #receipt-modal.open { display: flex; }
   .receipt-box {
@@ -251,9 +211,9 @@
   .receipt-title { font-family: var(--font-head); font-size: 34px; color: var(--gold); letter-spacing: 2px; margin-bottom: 4px; }
   .receipt-id { font-family: var(--font-mono); font-size: 10px; color: var(--text-dim); letter-spacing: 2px; margin-bottom: 20px; }
   .receipt-detail {
-    background: var(--bg); border-radius: var(--radius);
-    padding: 14px 16px; text-align: left; margin-bottom: 14px;
-    font-family: var(--font-mono); font-size: 12px; color: var(--text-mid); line-height: 1.9;
+    background: var(--bg); border-radius: var(--radius); padding: 14px 16px;
+    text-align: left; margin-bottom: 14px; font-family: var(--font-mono); font-size: 12px;
+    color: var(--text-mid); line-height: 1.9;
   }
   .receipt-sms {
     font-family: var(--font-mono); font-size: 11px;
@@ -273,16 +233,12 @@
     position: fixed; top: 16px; right: 16px; z-index: 50;
     background: var(--surface2); border: 1px solid var(--border2);
     color: var(--text-dim); font-family: var(--font-mono); font-size: 11px;
-    letter-spacing: 1px; padding: 6px 12px; border-radius: var(--radius);
-    cursor: pointer; transition: all 0.15s;
+    letter-spacing: 1px; padding: 6px 12px; border-radius: var(--radius); cursor: pointer;
   }
-  #config-btn:hover { border-color: var(--gold); color: var(--gold); }
   #config-btn.configured { border-color: var(--win-dim); color: var(--win); }
-
   #config-modal {
-    display: none; position: fixed; inset: 0;
-    background: rgba(0,0,0,0.75); z-index: 200;
-    align-items: center; justify-content: center;
+    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75);
+    z-index: 200; align-items: center; justify-content: center;
   }
   #config-modal.open { display: flex; }
   .modal-box {
@@ -291,44 +247,31 @@
   }
   .modal-title { font-family: var(--font-head); font-size: 26px; color: var(--gold); margin-bottom: 8px; letter-spacing: 1px; }
   .modal-note {
-    font-size: 11px; color: var(--text-dim); line-height: 1.8;
-    background: var(--surface2); border-radius: 4px;
-    padding: 12px 14px; margin-bottom: 18px; font-family: var(--font-mono);
+    font-size: 11px; color: var(--text-dim); line-height: 1.8; background: var(--surface2);
+    border-radius: 4px; padding: 12px 14px; margin-bottom: 18px; font-family: var(--font-mono);
   }
   .modal-fields { display: flex; flex-direction: column; gap: 12px; margin-bottom: 18px; }
   .modal-btns { display: flex; gap: 10px; justify-content: flex-end; align-items: center; }
   .btn-save {
     background: var(--gold); color: #000; font-family: var(--font-head);
-    font-size: 16px; letter-spacing: 1px; border: none;
-    border-radius: var(--radius); padding: 9px 24px; cursor: pointer;
+    font-size: 16px; letter-spacing: 1px; border: none; border-radius: var(--radius); padding: 9px 24px; cursor: pointer;
   }
   .btn-cancel {
     background: transparent; color: var(--text-dim); font-family: var(--font-mono);
-    font-size: 12px; border: 1px solid var(--border2);
-    border-radius: var(--radius); padding: 9px 20px; cursor: pointer;
+    font-size: 12px; border: 1px solid var(--border2); border-radius: var(--radius); padding: 9px 20px; cursor: pointer;
   }
-  .btn-cancel:hover { border-color: var(--danger); color: var(--danger); }
-  .btn-test {
-    background: transparent; color: var(--text-mid); font-family: var(--font-mono);
-    font-size: 11px; border: 1px solid var(--border2);
-    border-radius: var(--radius); padding: 9px 16px; cursor: pointer;
-    transition: all 0.15s; margin-right: auto;
-  }
-  .btn-test:hover { border-color: var(--place); color: var(--place); }
 
   /* ── TOAST ── */
   #toast {
-    position: fixed; bottom: 28px; left: 50%;
-    transform: translateX(-50%) translateY(10px);
-    background: var(--surface2); border: 1px solid var(--border2);
-    border-radius: 8px; padding: 12px 22px; font-family: var(--font-mono);
-    font-size: 12px; opacity: 0; transition: all 0.25s; z-index: 400;
-    pointer-events: none; white-space: nowrap;
+    position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(10px);
+    background: var(--surface2); border: 1px solid var(--border2); border-radius: 8px;
+    padding: 12px 22px; font-family: var(--font-mono); font-size: 12px;
+    opacity: 0; transition: all 0.25s; z-index: 400; pointer-events: none; white-space: nowrap;
   }
   #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-  #toast.success { border-color: var(--win);    color: var(--win); }
+  #toast.success { border-color: var(--win); color: var(--win); }
   #toast.error   { border-color: var(--danger); color: var(--danger); }
-  #toast.info    { border-color: var(--gold);   color: var(--gold); }
+  #toast.info    { border-color: var(--gold); color: var(--gold); }
 </style>
 </head>
 <body>
@@ -341,21 +284,16 @@
     <div class="logo-sub">Pari-Mutuel Wagering — 2026</div>
   </header>
 
-  <div id="setup-banner">
-    ⚠ &nbsp;Not connected to Google Sheets. Click <strong>⚙ CONFIG</strong> and paste your Apps Script URL.
-  </div>
-
   <div id="names-status">
     <span id="names-status-text">⏳ Loading team names…</span>
-    <button class="btn-reload-names" onclick="fetchTeamNames()">↻ RELOAD NAMES</button>
+    <button class="btn-reload" onclick="fetchTeamNames()">↻ RELOAD</button>
   </div>
 
   <div class="section-label">Bettor Information</div>
   <div class="bettor-row">
     <div class="field">
       <label>Full Name *</label>
-      <input type="text" id="bettor-name" placeholder="e.g. Casey Johnson"
-        autocomplete="off" oninput="refreshSubmit()">
+      <input type="text" id="bettor-name" placeholder="e.g. Casey Johnson" autocomplete="off" oninput="refreshSubmit()">
     </div>
     <div class="field">
       <label>Phone (SMS receipt)</label>
@@ -373,11 +311,7 @@
   </div>
 
   <div id="bet-rows"></div>
-
-  <button class="btn-add-row" onclick="addRow()">
-    <span class="plus">+</span> Add another team
-  </button>
-
+  <button class="btn-add-row" onclick="addRow()"><span class="plus">+</span> Add another team</button>
   <hr class="divider">
 
   <div id="summary-panel">
@@ -386,20 +320,15 @@
       <div class="summary-grand" id="grand-total">$0.00</div>
     </div>
     <table class="summary-table">
-      <thead>
-        <tr>
-          <th style="text-align:left">Team</th>
-          <th>Win</th><th>Place</th><th>Show</th><th>Subtotal</th>
-        </tr>
-      </thead>
+      <thead><tr><th style="text-align:left">Team</th><th>Win</th><th>Place</th><th>Show</th><th>Subtotal</th></tr></thead>
       <tbody id="summary-body"></tbody>
       <tfoot>
         <tr>
           <td>TOTAL</td>
-          <td class="td-win"   id="foot-win">—</td>
+          <td class="td-win" id="foot-win">—</td>
           <td class="td-place" id="foot-place">—</td>
-          <td class="td-show"  id="foot-show">—</td>
-          <td id="foot-total"  style="color:var(--gold);font-size:14px">$0.00</td>
+          <td class="td-show" id="foot-show">—</td>
+          <td id="foot-total" style="color:var(--gold);font-size:14px">$0.00</td>
         </tr>
       </tfoot>
     </table>
@@ -413,9 +342,9 @@
   <div class="receipt-box">
     <div class="receipt-icon">🏆</div>
     <div class="receipt-title">BET PLACED!</div>
-    <div class="receipt-id"     id="receipt-id"></div>
+    <div class="receipt-id" id="receipt-id"></div>
     <div class="receipt-detail" id="receipt-detail"></div>
-    <div class="receipt-sms"    id="receipt-sms"></div>
+    <div class="receipt-sms" id="receipt-sms"></div>
     <button class="btn-next" onclick="resetForm()">NEXT BETTOR</button>
   </div>
 </div>
@@ -424,29 +353,14 @@
 <div id="config-modal">
   <div class="modal-box">
     <div class="modal-title">CONFIGURATION</div>
-    <div class="modal-note">Credentials are saved to localStorage on this device only.</div>
+    <div class="modal-note">Override default settings if needed. Leave blank to use defaults.</div>
     <div class="modal-fields">
-      <div class="field">
-        <label>Apps Script Web App URL *</label>
-        <input type="text" id="cfg-script-url">
-      </div>
-      <div class="field">
-        <label>Twilio Proxy URL</label>
-        <input type="text" id="cfg-twilio-url">
-      </div>
-      <div class="field">
-        <label>From Phone Number</label>
-        <input type="text" id="cfg-from-phone">
-      </div>
-      <div class="field">
-        <label>Event Name</label>
-        <input type="text" id="cfg-event-name">
-      </div>
+      <div class="field"><label>Proxy URL</label><input type="text" id="cfg-proxy-url" placeholder="https://classicpari.landcreations.workers.dev"></div>
+      <div class="field"><label>Event Name</label><input type="text" id="cfg-event-name" placeholder="Columbine Classic 2026 - Pari-Mutuels"></div>
     </div>
     <div class="modal-btns">
-      <button class="btn-test"   onclick="testConnection()">Test Connection</button>
       <button class="btn-cancel" onclick="closeConfig()">Cancel</button>
-      <button class="btn-save"   onclick="saveConfig()">SAVE</button>
+      <button class="btn-save" onclick="saveConfig()">SAVE</button>
     </div>
   </div>
 </div>
@@ -455,33 +369,25 @@
 
 <script>
 // ── HARDCODED DEFAULTS ────────────────────────────────────────────────────
-var DEFAULTS = {
-  scriptUrl: 'https://script.google.com/macros/s/AKfycbwsCtyqLTFsxV3sEPjOTOSri2Gm2zn933upfs0QT4ACEAN_qhyQb-aWuRijDZPIz7G3EQ/exec',
-  twilioUrl: 'https://classicpari.landcreations.workers.dev',
-  fromPhone: '+17205752284',
-  eventName: 'Columbine Classic 2026 - Pari-Mutuels'
-};
+var PROXY    = 'https://classicpari.landcreations.workers.dev';
+var FROM     = '+17205752284';
+var EVENT    = 'Columbine Classic 2026 - Pari-Mutuels';
 
-// ── CONFIG ────────────────────────────────────────────────────────────────
-var cfg = Object.assign({}, DEFAULTS);
+// Runtime config (can be overridden via Config modal)
+var cfg = { proxy: PROXY, eventName: EVENT };
 
 function loadConfig() {
   try {
-    var saved = JSON.parse(localStorage.getItem('wagering_config') || '{}');
-    // Only override defaults if user has explicitly saved something
-    if (saved.scriptUrl) cfg.scriptUrl = saved.scriptUrl;
-    if (saved.twilioUrl) cfg.twilioUrl = saved.twilioUrl;
-    if (saved.fromPhone) cfg.fromPhone = saved.fromPhone;
-    if (saved.eventName) cfg.eventName = saved.eventName;
+    var s = JSON.parse(localStorage.getItem('wagering_cfg2') || '{}');
+    if (s.proxy)     cfg.proxy     = s.proxy;
+    if (s.eventName) cfg.eventName = s.eventName;
   } catch(e) {}
 }
 
 function saveConfig() {
-  cfg.scriptUrl = document.getElementById('cfg-script-url').value.trim() || DEFAULTS.scriptUrl;
-  cfg.twilioUrl = document.getElementById('cfg-twilio-url').value.trim() || DEFAULTS.twilioUrl;
-  cfg.fromPhone = document.getElementById('cfg-from-phone').value.trim() || DEFAULTS.fromPhone;
-  cfg.eventName = document.getElementById('cfg-event-name').value.trim() || DEFAULTS.eventName;
-  localStorage.setItem('wagering_config', JSON.stringify(cfg));
+  cfg.proxy     = document.getElementById('cfg-proxy-url').value.trim()   || PROXY;
+  cfg.eventName = document.getElementById('cfg-event-name').value.trim()  || EVENT;
+  localStorage.setItem('wagering_cfg2', JSON.stringify(cfg));
   closeConfig();
   updateConfigStatus();
   fetchTeamNames();
@@ -489,67 +395,50 @@ function saveConfig() {
 }
 
 function openConfig() {
-  loadConfig();
-  document.getElementById('cfg-script-url').value = cfg.scriptUrl;
-  document.getElementById('cfg-twilio-url').value = cfg.twilioUrl;
-  document.getElementById('cfg-from-phone').value = cfg.fromPhone;
-  document.getElementById('cfg-event-name').value = cfg.eventName;
+  document.getElementById('cfg-proxy-url').value   = cfg.proxy;
+  document.getElementById('cfg-event-name').value  = cfg.eventName;
   document.getElementById('config-modal').classList.add('open');
 }
 
-function closeConfig() {
-  document.getElementById('config-modal').classList.remove('open');
-}
-
-function updateConfigStatus() {
-  var btn    = document.getElementById('config-btn');
-  var banner = document.getElementById('setup-banner');
-  if (cfg.scriptUrl) {
-    btn.classList.add('configured');
-    btn.textContent = '✓ CONFIGURED';
-    banner.classList.remove('visible');
-  } else {
-    btn.classList.remove('configured');
-    btn.textContent = '⚙ CONFIG';
-    banner.classList.add('visible');
-  }
-}
-
+function closeConfig() { document.getElementById('config-modal').classList.remove('open'); }
 document.getElementById('config-modal').addEventListener('click', function(e) {
   if (e.target.id === 'config-modal') closeConfig();
 });
 
-async function testConnection() {
-  var url = document.getElementById('cfg-script-url').value.trim();
-  if (!url) { toast('Enter Apps Script URL first', 'error'); return; }
-  toast('Testing…', 'info');
-  try {
-    var res  = await fetch(url, { redirect: 'follow' });
-    var data = await res.json();
-    if (data.status) toast('✓ Connected: ' + data.status, 'success');
-    else toast('Unexpected response — check URL', 'error');
-  } catch(e) { toast('Could not reach URL: ' + e.message, 'error'); }
+function updateConfigStatus() {
+  var btn = document.getElementById('config-btn');
+  btn.classList.add('configured');
+  btn.textContent = '✓ CONFIGURED';
+}
+
+// ── API HELPERS ───────────────────────────────────────────────────────────
+// All requests go through Cloudflare Worker proxy:
+//   Sheets:  GET  /sheets?action=...
+//   SMS:     POST /sms
+
+function sheetsUrl(params) {
+  return cfg.proxy + '/sheets?' + params;
+}
+
+function smsUrl() {
+  return cfg.proxy + '/sms';
 }
 
 // ── TEAM NAMES ────────────────────────────────────────────────────────────
 var teamNames = {};
 
 async function fetchTeamNames() {
-  if (!cfg.scriptUrl) return;
   setNamesStatus('loading', '⏳ Loading team names…');
   try {
-    var res  = await fetch(cfg.scriptUrl + '?action=getTeams', { redirect: 'follow' });
+    var res  = await fetch(sheetsUrl('action=getTeams'));
     var data = await res.json();
     if (data.success && data.teams && data.teams.length) {
       data.teams.forEach(function(t) { teamNames[t.num] = t.name; });
-      // Refresh any visible name tags
       document.querySelectorAll('.team-name-tag').forEach(function(tag) {
         var id  = tag.dataset.rowId;
-        var num = parseInt(document.getElementById('team-' + id) && document.getElementById('team-' + id).value);
-        if (num >= 1 && num <= 96) {
-          tag.textContent = getTeamName(num);
-          tag.classList.add('visible');
-        }
+        var el  = document.getElementById('team-' + id);
+        var num = el ? parseInt(el.value) : 0;
+        if (num >= 1 && num <= 96) { tag.textContent = getTeamName(num); tag.classList.add('visible'); }
       });
       setNamesStatus('loaded', '✓ ' + data.teams.length + ' team names loaded');
       updateSummary();
@@ -564,51 +453,42 @@ async function fetchTeamNames() {
 function setNamesStatus(state, msg) {
   var el = document.getElementById('names-status');
   var tx = document.getElementById('names-status-text');
-  el.className = '';
+  el.className = state !== 'loading' ? state : '';
   el.id = 'names-status';
-  if (state !== 'loading') el.classList.add(state);
   tx.textContent = msg;
 }
 
-function getTeamName(num) {
-  return teamNames[num] || ('Team ' + num);
-}
+function getTeamName(num) { return teamNames[num] || ('Team ' + num); }
 
 // ── ROWS ──────────────────────────────────────────────────────────────────
 var rowCount = 0;
 
 function addRow(autoFocus) {
   if (autoFocus === undefined) autoFocus = true;
-  var id   = ++rowCount;
+  var id = ++rowCount;
   var wrap = document.getElementById('bet-rows');
-
   var row = document.createElement('div');
-  row.className = 'bet-row';
-  row.id = 'row-' + id;
+  row.className = 'bet-row'; row.id = 'row-' + id;
   row.innerHTML =
     '<div class="team-cell">' +
-      '<input type="number" class="inp-team" id="team-' + id + '" ' +
-        'placeholder="1–96" min="1" max="96" ' +
+      '<input type="number" class="inp-team" id="team-' + id + '" placeholder="1–96" min="1" max="96" ' +
         'oninput="onTeamInput(' + id + ')" onchange="onTeamChange(' + id + ')">' +
       '<div class="team-name-tag" id="teamname-' + id + '" data-row-id="' + id + '"></div>' +
     '</div>' +
     '<input type="number" class="inp-amt inp-win"   id="win-'   + id + '" placeholder="0" min="0" step="5" oninput="updateSummary()">' +
     '<input type="number" class="inp-amt inp-place" id="place-' + id + '" placeholder="0" min="0" step="5" oninput="updateSummary()">' +
     '<input type="number" class="inp-amt inp-show"  id="show-'  + id + '" placeholder="0" min="0" step="5" oninput="updateSummary()">' +
-    '<button class="btn-remove" onclick="removeRow(' + id + ')" title="Remove">×</button>';
-
+    '<button class="btn-remove" onclick="removeRow(' + id + ')">×</button>';
   wrap.appendChild(row);
-
   document.getElementById('team-' + id).addEventListener('keydown', function(e) {
     if (e.key === 'Enter') { e.preventDefault(); document.getElementById('win-' + id).focus(); }
   });
   document.getElementById('show-' + id).addEventListener('keydown', function(e) {
     if (e.key === 'Tab' && !e.shiftKey) {
       var all = document.querySelectorAll('.bet-row');
-      if (all[all.length - 1].id === 'row-' + id) { e.preventDefault(); addRow(true); }
+      if (all[all.length-1].id === 'row-' + id) { e.preventDefault(); addRow(true); }
     }
   });
-
   if (autoFocus) setTimeout(function() { document.getElementById('team-' + id).focus(); }, 40);
   updateSummary();
 }
@@ -618,7 +498,7 @@ function removeRow(id) {
   if (allRows.length === 1) {
     document.getElementById('team-' + id).value = '';
     document.getElementById('team-' + id).className = 'inp-team';
-    ['win','place','show'].forEach(function(f) { document.getElementById(f + '-' + id).value = ''; });
+    ['win','place','show'].forEach(function(f) { document.getElementById(f+'-'+id).value = ''; });
     var tag = document.getElementById('teamname-' + id);
     tag.textContent = ''; tag.classList.remove('visible');
     updateSummary(); return;
@@ -634,15 +514,11 @@ function onTeamInput(id) {
   var tag = document.getElementById('teamname-' + id);
   var v   = parseInt(inp.value);
   if (!inp.value) {
-    inp.className = 'inp-team';
-    tag.textContent = ''; tag.classList.remove('visible');
+    inp.className = 'inp-team'; tag.textContent = ''; tag.classList.remove('visible');
   } else if (v >= 1 && v <= 96) {
-    inp.className = 'inp-team valid';
-    tag.textContent = getTeamName(v);
-    tag.classList.add('visible');
+    inp.className = 'inp-team valid'; tag.textContent = getTeamName(v); tag.classList.add('visible');
   } else {
-    inp.className = 'inp-team invalid';
-    tag.textContent = 'invalid #'; tag.classList.add('visible');
+    inp.className = 'inp-team invalid'; tag.textContent = 'invalid #'; tag.classList.add('visible');
   }
   updateSummary();
 }
@@ -654,41 +530,33 @@ function onTeamChange(id) {
 
 // ── SUMMARY ───────────────────────────────────────────────────────────────
 function updateSummary() {
-  var bets = [];
-  var tW = 0, tP = 0, tS = 0;
-
+  var bets = []; var tW=0, tP=0, tS=0;
   document.querySelectorAll('.bet-row').forEach(function(row) {
     var id = row.id.replace('row-','');
-    var t  = parseInt(document.getElementById('team-'  + id).value);
-    var w  = parseFloat(document.getElementById('win-'  + id).value) || 0;
-    var p  = parseFloat(document.getElementById('place-'+ id).value) || 0;
-    var s  = parseFloat(document.getElementById('show-' + id).value) || 0;
-    if (!t || t < 1 || t > 96 || (w + p + s === 0)) return;
-    tW += w; tP += p; tS += s;
-    bets.push({ t: t, name: getTeamName(t), w: w, p: p, s: s });
+    var t  = parseInt(document.getElementById('team-'+id).value);
+    var w  = parseFloat(document.getElementById('win-'+id).value)   || 0;
+    var p  = parseFloat(document.getElementById('place-'+id).value) || 0;
+    var s  = parseFloat(document.getElementById('show-'+id).value)  || 0;
+    if (!t || t<1 || t>96 || (w+p+s===0)) return;
+    tW+=w; tP+=p; tS+=s;
+    bets.push({ t:t, name:getTeamName(t), w:w, p:p, s:s });
   });
-
   var panel = document.getElementById('summary-panel');
   if (bets.length === 0) { panel.classList.remove('visible'); refreshSubmit(); return; }
   panel.classList.add('visible');
-
-  var grand = tW + tP + tS;
+  var grand = tW+tP+tS;
   document.getElementById('summary-body').innerHTML = bets.map(function(b) {
-    return '<tr>' +
-      '<td><span class="td-team">#' + String(b.t).padStart(2,'0') + '</span> ' +
-           '<span class="td-name">' + b.name + '</span></td>' +
-      '<td class="td-win"  >'  + (b.w > 0 ? '$'+b.w.toFixed(2) : '—') + '</td>' +
-      '<td class="td-place">' + (b.p > 0 ? '$'+b.p.toFixed(2) : '—') + '</td>' +
-      '<td class="td-show" >'  + (b.s > 0 ? '$'+b.s.toFixed(2) : '—') + '</td>' +
-      '<td>$' + (b.w+b.p+b.s).toFixed(2) + '</td>' +
-    '</tr>';
+    return '<tr><td><span class="td-team">#'+String(b.t).padStart(2,'0')+'</span> <span class="td-name">'+b.name+'</span></td>' +
+      '<td class="td-win">'  +(b.w>0?'$'+b.w.toFixed(2):'—')+'</td>' +
+      '<td class="td-place">'+(b.p>0?'$'+b.p.toFixed(2):'—')+'</td>' +
+      '<td class="td-show">' +(b.s>0?'$'+b.s.toFixed(2):'—')+'</td>' +
+      '<td>$'+(b.w+b.p+b.s).toFixed(2)+'</td></tr>';
   }).join('');
-
-  document.getElementById('grand-total').textContent  = '$' + grand.toFixed(2);
-  document.getElementById('foot-win').textContent     = tW > 0 ? '$'+tW.toFixed(2) : '—';
-  document.getElementById('foot-place').textContent   = tP > 0 ? '$'+tP.toFixed(2) : '—';
-  document.getElementById('foot-show').textContent    = tS > 0 ? '$'+tS.toFixed(2) : '—';
-  document.getElementById('foot-total').textContent   = '$' + grand.toFixed(2);
+  document.getElementById('grand-total').textContent = '$'+grand.toFixed(2);
+  document.getElementById('foot-win').textContent    = tW>0?'$'+tW.toFixed(2):'—';
+  document.getElementById('foot-place').textContent  = tP>0?'$'+tP.toFixed(2):'—';
+  document.getElementById('foot-show').textContent   = tS>0?'$'+tS.toFixed(2):'—';
+  document.getElementById('foot-total').textContent  = '$'+grand.toFixed(2);
   refreshSubmit();
 }
 
@@ -707,14 +575,13 @@ async function submitWager() {
   var bets = [];
   document.querySelectorAll('.bet-row').forEach(function(row) {
     var id = row.id.replace('row-','');
-    var t  = parseInt(document.getElementById('team-'  + id).value);
-    var w  = parseFloat(document.getElementById('win-'  + id).value) || 0;
-    var p  = parseFloat(document.getElementById('place-'+ id).value) || 0;
-    var s  = parseFloat(document.getElementById('show-' + id).value) || 0;
-    if (!t || t < 1 || t > 96 || (w + p + s === 0)) return;
-    bets.push({ team: t, teamName: getTeamName(t), win: w, place: p, show: s });
+    var t  = parseInt(document.getElementById('team-'+id).value);
+    var w  = parseFloat(document.getElementById('win-'+id).value)   || 0;
+    var p  = parseFloat(document.getElementById('place-'+id).value) || 0;
+    var s  = parseFloat(document.getElementById('show-'+id).value)  || 0;
+    if (!t || t<1 || t>96 || (w+p+s===0)) return;
+    bets.push({ team:t, teamName:getTeamName(t), win:w, place:p, show:s });
   });
-
   if (!bets.length) { toast('No valid bets to submit', 'error'); return; }
 
   var btn = document.getElementById('submit-btn');
@@ -724,36 +591,29 @@ async function submitWager() {
   var ts    = new Date().toLocaleString();
   var sheetOk = false, smsStatus = 'skipped';
 
-  // ── POST to Apps Script via GET with encoded payload ──
+  // Submit bet via proxy /sheets endpoint
   try {
-    var payload      = { bettorName: name, phone: phone, bets: bets, betId: betId, timestamp: ts };
-    var encodedPayload = encodeURIComponent(JSON.stringify(payload));
-    var url  = cfg.scriptUrl + '?action=submitBet&payload=' + encodedPayload;
-    var res  = await fetch(url, { redirect: 'follow' });
+    var payload = { bettorName:name, phone:phone, bets:bets, betId:betId, timestamp:ts };
+    var url  = sheetsUrl('action=submitBet&payload=' + encodeURIComponent(JSON.stringify(payload)));
+    var res  = await fetch(url);
     var data = await res.json();
-    if (data.success) {
-      sheetOk = true;
-    } else {
-      toast('Sheet error: ' + (data.error || 'unknown'), 'error');
-    }
-  } catch(e) {
-    toast('Submit failed: ' + e.message, 'error');
-  }
+    if (data.success) { sheetOk = true; }
+    else { toast('Sheet error: ' + (data.error || 'unknown'), 'error'); }
+  } catch(e) { toast('Submit failed: ' + e.message, 'error'); }
 
-  // ── SMS via Twilio proxy ──
-  if (phone && cfg.twilioUrl) {
+  // SMS via proxy /sms endpoint
+  if (phone) {
     try {
       var lines = bets.map(function(b) {
-        return '#' + String(b.team).padStart(2,'0') + ' ' + b.teamName +
-          ': Win $' + b.win + ' | Place $' + b.place + ' | Show $' + b.show;
+        return '#'+String(b.team).padStart(2,'0')+' '+b.teamName+
+          ': Win $'+b.win+' | Place $'+b.place+' | Show $'+b.show;
       }).join('\n');
-      var total = bets.reduce(function(a,b) { return a + b.win + b.place + b.show; }, 0);
-      var msg = '🏆 ' + cfg.eventName + '\nBettor: ' + name + '\nRef: ' + betId +
-                '\n\n' + lines + '\n\nTOTAL: $' + total.toFixed(2) + '\nGood luck!';
-      var smsRes = await fetch(cfg.twilioUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ to: normalizePhone(phone), from: cfg.fromPhone, body: msg })
+      var total = bets.reduce(function(a,b) { return a+b.win+b.place+b.show; }, 0);
+      var msg = '🏆 '+cfg.eventName+'\nBettor: '+name+'\nRef: '+betId+
+                '\n\n'+lines+'\n\nTOTAL: $'+total.toFixed(2)+'\nGood luck!';
+      var smsRes = await fetch(smsUrl(), {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ to: normalizePhone(phone), from: FROM, body: msg })
       });
       smsStatus = smsRes.ok ? 'sent' : 'failed';
     } catch(e) { smsStatus = 'failed'; }
@@ -766,40 +626,31 @@ async function submitWager() {
 
 function normalizePhone(p) {
   var d = p.replace(/\D/g,'');
-  return d.startsWith('1') ? '+' + d : '+1' + d;
+  return d.startsWith('1') ? '+'+d : '+1'+d;
 }
 
 // ── RECEIPT ───────────────────────────────────────────────────────────────
 function showReceipt(name, phone, bets, betId, ts, smsStatus) {
-  var total = bets.reduce(function(a,b) { return a + b.win + b.place + b.show; }, 0);
+  var total = bets.reduce(function(a,b) { return a+b.win+b.place+b.show; }, 0);
   document.getElementById('receipt-id').textContent = betId + ' · ' + ts;
   document.getElementById('receipt-detail').innerHTML =
-    '<div><strong>' + name + '</strong></div>' +
+    '<div><strong>'+name+'</strong></div>' +
     '<div style="color:#2a2f42;margin:4px 0">────────────────────────</div>' +
     bets.map(function(b) {
-      return '<div>' +
-        '<strong style="color:var(--gold)">#' + String(b.team).padStart(2,'0') + '</strong> ' +
-        '<span style="color:var(--text-mid)">' + b.teamName + '</span><br>' +
+      return '<div><strong style="color:var(--gold)">#'+String(b.team).padStart(2,'0')+'</strong> ' +
+        '<span style="color:var(--text-mid)">'+b.teamName+'</span><br>' +
         '<span style="padding-left:4px">' +
-          '<span style="color:var(--win)">Win $' + b.win + '</span> &nbsp;' +
-          '<span style="color:var(--place)">Place $' + b.place + '</span> &nbsp;' +
-          '<span style="color:var(--show)">Show $' + b.show + '</span>' +
+          '<span style="color:var(--win)">Win $'+b.win+'</span> &nbsp;' +
+          '<span style="color:var(--place)">Place $'+b.place+'</span> &nbsp;' +
+          '<span style="color:var(--show)">Show $'+b.show+'</span>' +
         '</span></div>';
     }).join('') +
     '<div style="color:#2a2f42;margin:4px 0">────────────────────────</div>' +
-    '<div>TOTAL &nbsp;<strong style="color:var(--gold)">$' + total.toFixed(2) + '</strong></div>';
-
+    '<div>TOTAL &nbsp;<strong style="color:var(--gold)">$'+total.toFixed(2)+'</strong></div>';
   var smsEl = document.getElementById('receipt-sms');
-  if (smsStatus === 'sent') {
-    smsEl.className = 'receipt-sms sent';
-    smsEl.textContent = '✓ SMS receipt sent to ' + phone;
-  } else if (smsStatus === 'failed') {
-    smsEl.className = 'receipt-sms failed';
-    smsEl.textContent = '✗ SMS failed — check Twilio config';
-  } else {
-    smsEl.className = 'receipt-sms skipped';
-    smsEl.textContent = phone ? 'SMS skipped — no Twilio URL configured' : 'No phone number provided';
-  }
+  if (smsStatus==='sent')    { smsEl.className='receipt-sms sent';    smsEl.textContent='✓ SMS receipt sent to '+phone; }
+  else if (smsStatus==='failed') { smsEl.className='receipt-sms failed';  smsEl.textContent='✗ SMS failed — check Twilio config'; }
+  else                       { smsEl.className='receipt-sms skipped'; smsEl.textContent=phone?'SMS skipped — no phone configured':'No phone number provided'; }
   document.getElementById('receipt-modal').classList.add('open');
 }
 
