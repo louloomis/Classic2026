@@ -3,11 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Race Day — Live Odds Board</title>
+<title>Columbine Classic 2026 — Live Odds Board</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
   :root {
     --bg:        #080C14;
     --surface:   #0E1520;
@@ -22,11 +21,9 @@
     --font-mono: 'DM Mono', monospace;
     --font-body: 'DM Sans', sans-serif;
   }
-
   html, body {
     background: var(--bg); color: var(--text);
-    font-family: var(--font-body);
-    height: 100vh; overflow: hidden; user-select: none;
+    font-family: var(--font-body); height: 100vh; overflow: hidden; user-select: none;
   }
 
   /* ── HEADER ── */
@@ -34,55 +31,27 @@
     position: fixed; top: 0; left: 0; right: 0; z-index: 100;
     background: var(--bg); border-bottom: 2px solid var(--border);
   }
-  .header-top {
-    display: flex; align-items: center;
-    padding: 10px 24px 6px; gap: 20px;
-  }
-  .logo {
-    font-family: var(--font-head); font-size: 38px;
-    letter-spacing: 3px; color: var(--gold);
-    text-shadow: 0 0 30px rgba(240,180,41,0.3);
-    line-height: 1; flex-shrink: 0;
-  }
-  .logo-sub {
-    font-family: var(--font-mono); font-size: 11px;
-    letter-spacing: 3px; color: var(--text-dim); text-transform: uppercase;
-  }
+  .header-top { display: flex; align-items: center; padding: 10px 24px 6px; gap: 20px; }
+  .logo { font-family: var(--font-head); font-size: 38px; letter-spacing: 3px; color: var(--gold); text-shadow: 0 0 30px rgba(240,180,41,0.3); line-height: 1; flex-shrink: 0; }
+  .logo-sub { font-family: var(--font-mono); font-size: 11px; letter-spacing: 3px; color: var(--text-dim); text-transform: uppercase; }
   .pools { display: flex; gap: 10px; margin-left: auto; align-items: center; }
-  .pool-chip {
-    font-family: var(--font-mono); font-size: 14px; font-weight: 500;
-    padding: 7px 16px; border-radius: 4px; border: 1px solid;
-  }
+  .pool-chip { font-family: var(--font-mono); font-size: 14px; font-weight: 500; padding: 7px 16px; border-radius: 4px; border: 1px solid; }
   .pool-chip.win   { color: var(--win);   border-color: #14532d; background: #0d2818; }
   .pool-chip.place { color: var(--place); border-color: #1e3a8a; background: #0a1628; }
   .pool-chip.show  { color: var(--show);  border-color: #581c87; background: #160d22; }
   .pool-chip.grand { color: var(--gold);  border-color: #7a5c14; background: #1a1200; }
-
-  .header-bottom {
-    display: flex; align-items: center;
-    padding: 4px 24px 8px; gap: 16px;
-  }
+  .header-bottom { display: flex; align-items: center; padding: 4px 24px 8px; gap: 16px; }
   .slide-dots { display: flex; gap: 8px; align-items: center; }
-  .dot {
-    width: 32px; height: 4px; border-radius: 2px;
-    background: var(--border); transition: background 0.3s;
-  }
+  .dot { width: 32px; height: 4px; border-radius: 2px; background: var(--border); transition: background 0.3s; }
   .dot.active { background: var(--gold); }
-  .slide-label {
-    font-family: var(--font-mono); font-size: 12px;
-    color: var(--text-dim); letter-spacing: 2px;
-  }
-  .timestamp {
-    font-family: var(--font-mono); font-size: 11px;
-    color: var(--text-dim); margin-left: auto;
-  }
+  .slide-label { font-family: var(--font-mono); font-size: 12px; color: var(--text-dim); letter-spacing: 2px; }
+  .timestamp { font-family: var(--font-mono); font-size: 11px; color: var(--text-dim); margin-left: auto; }
   #progress-bar { height: 3px; background: var(--border); position: relative; overflow: hidden; }
   #progress-fill { position: absolute; left: 0; top: 0; bottom: 0; background: var(--gold); width: 0%; }
 
   /* ── SLIDES ── */
   #slide-a, #slide-b {
-    position: fixed;
-    top: 132px; left: 14px; right: 14px; bottom: 14px;
+    position: fixed; top: 132px; left: 14px; right: 14px; bottom: 14px;
     display: flex; flex-direction: column; gap: 8px;
     transition: opacity 0.5s ease, transform 0.5s ease;
   }
@@ -90,119 +59,42 @@
   #slide-a.visible, #slide-b.visible { opacity: 1; pointer-events: all; transform: translateY(0); }
 
   /* ── FLIGHT BLOCK ── */
-  .flight-block {
-    flex: 1; display: grid;
-    grid-template-columns: 80px 1fr;
-    gap: 8px; min-height: 0;
-  }
-  .flight-label {
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    border-radius: 8px; border: 2px solid;
-    font-family: var(--font-head); line-height: 1.1;
-  }
+  .flight-block { flex: 1; display: grid; grid-template-columns: 80px 1fr; gap: 8px; min-height: 0; }
+  .flight-label { display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 8px; border: 2px solid; font-family: var(--font-head); line-height: 1.1; }
   .flight-label .fl-num  { font-size: 36px; letter-spacing: 1px; }
   .flight-label .fl-word { font-size: 11px; letter-spacing: 3px; opacity: 0.7; }
-
-  .teams-row {
-    display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px;
-  }
+  .teams-row { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
 
   /* ── TEAM BOX ── */
-  .team-box {
-    border-radius: 8px; border: 1px solid;
-    display: flex; flex-direction: column;
-    overflow: hidden; min-height: 0;
-  }
-
-  /* Top section: number + name + total bets */
-  .team-top {
-    padding: 7px 9px 5px;
-    display: flex; flex-direction: column; gap: 2px;
-    flex: 1;
-  }
-  .team-num {
-    font-family: var(--font-head);
-    font-size: 26px; color: var(--gold); line-height: 1;
-  }
-  .team-name {
-    font-family: var(--font-body); font-size: 14px; font-weight: 600;
-    color: var(--text); line-height: 1.2;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  }
-  .team-total {
-    font-family: var(--font-mono); font-size: 11px;
-    color: var(--text-dim); margin-top: 2px;
-  }
+  .team-box { border-radius: 8px; border: 1px solid; display: flex; flex-direction: column; overflow: hidden; min-height: 0; }
+  .team-top { padding: 7px 9px 5px; display: flex; flex-direction: column; gap: 2px; flex: 1; }
+  .team-num  { font-family: var(--font-head); font-size: 26px; color: var(--gold); line-height: 1; }
+  .team-name { font-family: var(--font-body); font-size: 14px; font-weight: 600; color: var(--text); line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .team-total { font-family: var(--font-mono); font-size: 11px; color: var(--text-dim); margin-top: 2px; }
   .team-total span { color: var(--gold); font-weight: 500; }
-
-  /* Odds section: W / P / S */
-  .odds-row {
-    display: grid; grid-template-columns: 1fr 1fr 1fr;
-    border-top: 1px solid;
-  }
-  .odds-cell {
-    padding: 5px 4px; text-align: center;
-    font-family: var(--font-mono); line-height: 1;
-  }
-  .odds-cell .odds-label {
-    font-size: 9px; letter-spacing: 1px;
-    opacity: 0.65; display: block; margin-bottom: 3px;
-    text-transform: uppercase;
-  }
-  .odds-cell .odds-val {
-    font-size: 14px; font-weight: 500; display: block;
-  }
+  .odds-row { display: grid; grid-template-columns: 1fr 1fr 1fr; border-top: 1px solid; }
+  .odds-cell { padding: 5px 4px; text-align: center; font-family: var(--font-mono); line-height: 1; }
+  .odds-cell .odds-label { font-size: 9px; letter-spacing: 1px; opacity: 0.65; display: block; margin-bottom: 3px; text-transform: uppercase; }
+  .odds-cell .odds-val   { font-size: 14px; font-weight: 500; display: block; }
   .odds-cell.win-cell   { color: var(--win);   border-right: 1px solid; }
   .odds-cell.place-cell { color: var(--place); border-right: 1px solid; }
   .odds-cell.show-cell  { color: var(--show); }
   .odds-cell.no-bets .odds-val { color: var(--text-dim); opacity: 0.35; font-size: 13px; }
 
-  /* ── CONFIG OVERLAY ── */
-  #config-overlay {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.92);
-    z-index: 500; display: flex; align-items: center; justify-content: center;
-  }
+  /* ── CONFIG ── */
+  #config-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 500; display: flex; align-items: center; justify-content: center; }
   #config-overlay.hidden { display: none; }
-  .config-box {
-    background: #0E1520; border: 1px solid #353c55;
-    border-radius: 10px; padding: 32px; width: 500px;
-  }
-  .config-title {
-    font-family: var(--font-head); font-size: 28px;
-    color: var(--gold); margin-bottom: 8px; letter-spacing: 2px;
-  }
-  .config-note {
-    font-family: var(--font-mono); font-size: 10px; color: var(--text-dim);
-    line-height: 1.7; background: #080C14; border-radius: 4px;
-    padding: 10px 12px; margin-bottom: 18px;
-  }
+  .config-box { background: #0E1520; border: 1px solid #353c55; border-radius: 10px; padding: 32px; width: 500px; }
+  .config-title { font-family: var(--font-head); font-size: 28px; color: var(--gold); margin-bottom: 8px; letter-spacing: 2px; }
+  .config-note { font-family: var(--font-mono); font-size: 10px; color: var(--text-dim); line-height: 1.7; background: #080C14; border-radius: 4px; padding: 10px 12px; margin-bottom: 18px; }
   .config-field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
-  .config-field label {
-    font-family: var(--font-mono); font-size: 10px;
-    letter-spacing: 2px; text-transform: uppercase; color: var(--text-dim);
-  }
-  .config-field input {
-    background: var(--bg); border: 1px solid #2a2f42;
-    border-radius: 6px; color: var(--text);
-    font-family: var(--font-mono); font-size: 12px;
-    padding: 10px 12px; outline: none; width: 100%;
-    transition: border-color 0.15s;
-  }
+  .config-field label { font-family: var(--font-mono); font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-dim); }
+  .config-field input { background: var(--bg); border: 1px solid #2a2f42; border-radius: 6px; color: var(--text); font-family: var(--font-mono); font-size: 12px; padding: 10px 12px; outline: none; width: 100%; }
   .config-field input:focus { border-color: var(--gold); }
-  .btn-start {
-    width: 100%; background: var(--gold); color: #000;
-    font-family: var(--font-head); font-size: 22px; letter-spacing: 2px;
-    border: none; border-radius: 6px; padding: 13px; cursor: pointer; margin-top: 6px;
-  }
+  .btn-start { width: 100%; background: var(--gold); color: #000; font-family: var(--font-head); font-size: 22px; letter-spacing: 2px; border: none; border-radius: 6px; padding: 13px; cursor: pointer; margin-top: 6px; }
 
   /* ── STATUS BAR ── */
-  #status-bar {
-    position: fixed; bottom: 0; left: 0; right: 0;
-    background: #1a0a0a; border-top: 1px solid #7f1d1d;
-    color: #ef4444; font-family: var(--font-mono); font-size: 11px;
-    padding: 6px 16px; display: none;
-  }
+  #status-bar { position: fixed; bottom: 0; left: 0; right: 0; background: #1a0a0a; border-top: 1px solid #7f1d1d; color: #ef4444; font-family: var(--font-mono); font-size: 11px; padding: 6px 16px; display: none; }
   #status-bar.visible { display: block; }
 </style>
 </head>
@@ -213,17 +105,17 @@
   <div class="config-box">
     <div class="config-title">ODDS BOARD SETUP</div>
     <div class="config-note">
-      Apps Script URL is pre-configured. Update event name if needed.<br>
+      Proxy URL is pre-configured — just enter your event name and click Start.<br>
       Odds refresh every 30 seconds. Slides advance every 10 seconds.<br>
-      Press <strong>Escape</strong> or <strong>double-click</strong> anywhere to return here.
+      Press <strong>Escape</strong> or <strong>double-click</strong> to return here.
     </div>
     <div class="config-field">
-      <label>Apps Script URL</label>
-      <input type="text" id="cfg-url">
+      <label>Proxy URL</label>
+      <input type="text" id="cfg-proxy">
     </div>
     <div class="config-field">
       <label>Event Name</label>
-      <input type="text" id="cfg-event" placeholder="Race Day 2025">
+      <input type="text" id="cfg-event">
     </div>
     <button class="btn-start" onclick="startDisplay()">START DISPLAY</button>
   </div>
@@ -233,7 +125,7 @@
 <div id="header">
   <div class="header-top">
     <div>
-      <div class="logo" id="logo-text">RACE DAY</div>
+      <div class="logo" id="logo-text">COLUMBINE CLASSIC</div>
       <div class="logo-sub">LIVE ODDS BOARD</div>
     </div>
     <div class="pools">
@@ -251,18 +143,15 @@
   <div id="progress-bar"><div id="progress-fill"></div></div>
 </div>
 
-<!-- Slides -->
 <div id="slide-a" class="visible"></div>
 <div id="slide-b" class="hidden"></div>
-
 <div id="status-bar"></div>
 
 <script>
 // ── HARDCODED DEFAULTS ────────────────────────────────────────────────────
-var DEFAULT_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwsCtyqLTFsxV3sEPjOTOSri2Gm2zn933upfs0QT4ACEAN_qhyQb-aWuRijDZPIz7G3EQ/exec';
-var DEFAULT_EVENT_NAME = 'Race Day';
+var DEFAULT_PROXY = 'https://classicpari.landcreations.workers.dev';
+var DEFAULT_EVENT = 'Columbine Classic 2026';
 
-// ── CONSTANTS ─────────────────────────────────────────────────────────────
 var FLIGHTS_PER_SLIDE = 4;
 var TEAMS_PER_FLIGHT  = 6;
 var TOTAL_FLIGHTS     = 16;
@@ -272,95 +161,70 @@ var REFRESH_INTERVAL  = 30000;
 var PROGRESS_INTERVAL = 50;
 
 var FLIGHT_STYLES = [
-  { bg:"#1A2744", border:"#6BA3E8", label:"#6BA3E8" },
-  { bg:"#1A3320", border:"#4ADE80", label:"#4ADE80" },
-  { bg:"#2D1A44", border:"#C084FC", label:"#C084FC" },
-  { bg:"#3D1F0A", border:"#FB923C", label:"#FB923C" },
-  { bg:"#1A3344", border:"#38BDF8", label:"#38BDF8" },
-  { bg:"#2D2A0A", border:"#FACC15", label:"#FACC15" },
-  { bg:"#1A2D2A", border:"#2DD4BF", label:"#2DD4BF" },
-  { bg:"#3D0A1A", border:"#F87171", label:"#F87171" },
-  { bg:"#1A2744", border:"#818CF8", label:"#818CF8" },
-  { bg:"#1A3320", border:"#86EFAC", label:"#86EFAC" },
-  { bg:"#2D1A44", border:"#E879F9", label:"#E879F9" },
-  { bg:"#3D1F0A", border:"#FCA5A5", label:"#FCA5A5" },
-  { bg:"#1A3344", border:"#7DD3FC", label:"#7DD3FC" },
-  { bg:"#2D2A0A", border:"#FDE68A", label:"#FDE68A" },
-  { bg:"#1A2D2A", border:"#99F6E4", label:"#99F6E4" },
-  { bg:"#3D0A1A", border:"#FECACA", label:"#FECACA" },
+  {bg:"#1A2744",border:"#6BA3E8",label:"#6BA3E8"},{bg:"#1A3320",border:"#4ADE80",label:"#4ADE80"},
+  {bg:"#2D1A44",border:"#C084FC",label:"#C084FC"},{bg:"#3D1F0A",border:"#FB923C",label:"#FB923C"},
+  {bg:"#1A3344",border:"#38BDF8",label:"#38BDF8"},{bg:"#2D2A0A",border:"#FACC15",label:"#FACC15"},
+  {bg:"#1A2D2A",border:"#2DD4BF",label:"#2DD4BF"},{bg:"#3D0A1A",border:"#F87171",label:"#F87171"},
+  {bg:"#1A2744",border:"#818CF8",label:"#818CF8"},{bg:"#1A3320",border:"#86EFAC",label:"#86EFAC"},
+  {bg:"#2D1A44",border:"#E879F9",label:"#E879F9"},{bg:"#3D1F0A",border:"#FCA5A5",label:"#FCA5A5"},
+  {bg:"#1A3344",border:"#7DD3FC",label:"#7DD3FC"},{bg:"#2D2A0A",border:"#FDE68A",label:"#FDE68A"},
+  {bg:"#1A2D2A",border:"#99F6E4",label:"#99F6E4"},{bg:"#3D0A1A",border:"#FECACA",label:"#FECACA"},
 ];
 
-var scriptUrl     = DEFAULT_SCRIPT_URL;
-var eventName     = DEFAULT_EVENT_NAME;
-var oddsData      = null;
-var currentSlide  = 0;
-var activeEl      = 'a';
-var slideTimer    = null;
-var refreshTimer  = null;
+var proxyUrl     = DEFAULT_PROXY;
+var eventName    = DEFAULT_EVENT;
+var oddsData     = null;
+var currentSlide = 0;
+var activeEl     = 'a';
+var slideTimer   = null;
+var refreshTimer = null;
 var progressTimer = null;
 var progressStart = null;
 
-// ── INIT ──────────────────────────────────────────────────────────────────
+function sheetsUrl(params) { return proxyUrl + '/sheets?' + params; }
+
 window.addEventListener('DOMContentLoaded', function() {
   try {
-    var saved = JSON.parse(localStorage.getItem('oddsboard_config') || '{}');
-    if (saved.scriptUrl) scriptUrl = saved.scriptUrl;
+    var saved = JSON.parse(localStorage.getItem('oddsboard_cfg2') || '{}');
+    if (saved.proxy)     proxyUrl  = saved.proxy;
     if (saved.eventName) eventName = saved.eventName;
   } catch(e) {}
 
-  document.getElementById('cfg-url').value   = scriptUrl;
+  document.getElementById('cfg-proxy').value = proxyUrl;
   document.getElementById('cfg-event').value = eventName;
 
-  // Build slide dots
   var dots = document.getElementById('slide-dots');
   for (var i = 0; i < TOTAL_SLIDES; i++) {
     var d = document.createElement('div');
-    d.className = 'dot' + (i === 0 ? ' active' : '');
-    d.id = 'dot-' + i;
+    d.className = 'dot' + (i===0?' active':''); d.id = 'dot-'+i;
     dots.appendChild(d);
   }
-
   startDisplay();
 });
 
 function startDisplay() {
-  var urlInput = document.getElementById('cfg-url').value.trim();
-  var evtInput = document.getElementById('cfg-event').value.trim();
-
-  scriptUrl = urlInput || DEFAULT_SCRIPT_URL;
-  eventName = evtInput || DEFAULT_EVENT_NAME;
-
-  localStorage.setItem('oddsboard_config', JSON.stringify({
-    scriptUrl: scriptUrl, eventName: eventName
-  }));
-
+  proxyUrl  = document.getElementById('cfg-proxy').value.trim() || DEFAULT_PROXY;
+  eventName = document.getElementById('cfg-event').value.trim() || DEFAULT_EVENT;
+  localStorage.setItem('oddsboard_cfg2', JSON.stringify({ proxy: proxyUrl, eventName: eventName }));
   document.getElementById('config-overlay').classList.add('hidden');
   document.getElementById('logo-text').textContent = eventName.toUpperCase();
-
-  clearInterval(slideTimer);
-  clearInterval(refreshTimer);
-  clearInterval(progressTimer);
-
+  clearInterval(slideTimer); clearInterval(refreshTimer); clearInterval(progressTimer);
   fetchOdds().then(function() { startSlideshow(); });
   refreshTimer = setInterval(fetchOdds, REFRESH_INTERVAL);
-
-  document.addEventListener('keydown', function(e) { if (e.key === 'Escape') showConfig(); });
+  document.addEventListener('keydown', function(e) { if (e.key==='Escape') showConfig(); });
   document.addEventListener('dblclick', showConfig);
 }
 
 function showConfig() {
-  clearInterval(slideTimer);
-  clearInterval(refreshTimer);
-  clearInterval(progressTimer);
-  document.getElementById('cfg-url').value   = scriptUrl;
+  clearInterval(slideTimer); clearInterval(refreshTimer); clearInterval(progressTimer);
+  document.getElementById('cfg-proxy').value = proxyUrl;
   document.getElementById('cfg-event').value = eventName;
   document.getElementById('config-overlay').classList.remove('hidden');
 }
 
-// ── FETCH ODDS ────────────────────────────────────────────────────────────
 async function fetchOdds() {
   try {
-    var res  = await fetch(scriptUrl + '?action=getOdds');
+    var res  = await fetch(sheetsUrl('action=getOdds'));
     var data = await res.json();
     if (data.success) {
       oddsData = data;
@@ -370,9 +234,7 @@ async function fetchOdds() {
     } else {
       showError('Sheet error: ' + (data.error || 'unknown'));
     }
-  } catch(e) {
-    showError('Could not reach Apps Script: ' + e.message);
-  }
+  } catch(e) { showError('Fetch failed: ' + e.message); }
 }
 
 function updateHeader(pools, ts) {
@@ -383,180 +245,98 @@ function updateHeader(pools, ts) {
   document.getElementById('timestamp').textContent  = 'Updated: ' + ts;
 }
 
-function fmt(n) {
-  return Number(n).toLocaleString('en-US', { minimumFractionDigits:0, maximumFractionDigits:0 });
-}
+function fmt(n) { return Number(n).toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0}); }
+function fmtMoney(n) { return '$'+Number(n).toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0}); }
 
-function fmtMoney(n) {
-  return '$' + Number(n).toLocaleString('en-US', { minimumFractionDigits:0, maximumFractionDigits:0 });
-}
-
-// ── SLIDESHOW ─────────────────────────────────────────────────────────────
 function startSlideshow() {
-  renderSlide(0, getActiveEl());
-  updateDots(0);
-  updateSlideLabel(0);
-  startProgress();
+  renderSlide(0, getActiveEl()); updateDots(0); updateSlideLabel(0); startProgress();
   slideTimer = setInterval(advanceSlide, SLIDE_DURATION);
 }
 
 function advanceSlide() {
-  var nextSlide = (currentSlide + 1) % TOTAL_SLIDES;
-  var nextEl    = activeEl === 'a' ? 'b' : 'a';
-
-  renderSlide(nextSlide, document.getElementById('slide-' + nextEl));
-
-  document.getElementById('slide-' + activeEl).classList.remove('visible');
-  document.getElementById('slide-' + activeEl).classList.add('hidden');
-  document.getElementById('slide-' + nextEl).classList.remove('hidden');
-  document.getElementById('slide-' + nextEl).classList.add('visible');
-
-  activeEl     = nextEl;
-  currentSlide = nextSlide;
-  updateDots(currentSlide);
-  updateSlideLabel(currentSlide);
-  startProgress();
+  var nextSlide = (currentSlide+1) % TOTAL_SLIDES;
+  var nextEl    = activeEl==='a' ? 'b' : 'a';
+  renderSlide(nextSlide, document.getElementById('slide-'+nextEl));
+  document.getElementById('slide-'+activeEl).classList.remove('visible');
+  document.getElementById('slide-'+activeEl).classList.add('hidden');
+  document.getElementById('slide-'+nextEl).classList.remove('hidden');
+  document.getElementById('slide-'+nextEl).classList.add('visible');
+  activeEl=nextEl; currentSlide=nextSlide;
+  updateDots(currentSlide); updateSlideLabel(currentSlide); startProgress();
 }
 
-function getActiveEl() { return document.getElementById('slide-' + activeEl); }
+function getActiveEl() { return document.getElementById('slide-'+activeEl); }
 
 function updateDots(idx) {
-  for (var i = 0; i < TOTAL_SLIDES; i++) {
-    var d = document.getElementById('dot-' + i);
-    if (d) d.className = 'dot' + (i === idx ? ' active' : '');
+  for (var i=0;i<TOTAL_SLIDES;i++) {
+    var d=document.getElementById('dot-'+i);
+    if (d) d.className='dot'+(i===idx?' active':'');
   }
 }
 
 function updateSlideLabel(idx) {
-  var sf = idx * FLIGHTS_PER_SLIDE + 1;
-  var ef = sf + FLIGHTS_PER_SLIDE - 1;
-  var st = (idx * FLIGHTS_PER_SLIDE * TEAMS_PER_FLIGHT) + 1;
-  var et = st + (FLIGHTS_PER_SLIDE * TEAMS_PER_FLIGHT) - 1;
-  document.getElementById('slide-label').textContent =
-    'FLIGHTS ' + sf + '–' + ef + '   |   TEAMS ' + st + '–' + et;
+  var sf=idx*FLIGHTS_PER_SLIDE+1, ef=sf+FLIGHTS_PER_SLIDE-1;
+  var st=(idx*FLIGHTS_PER_SLIDE*TEAMS_PER_FLIGHT)+1, et=st+(FLIGHTS_PER_SLIDE*TEAMS_PER_FLIGHT)-1;
+  document.getElementById('slide-label').textContent='FLIGHTS '+sf+'–'+ef+'   |   TEAMS '+st+'–'+et;
 }
 
-// ── PROGRESS BAR ──────────────────────────────────────────────────────────
 function startProgress() {
-  clearInterval(progressTimer);
-  progressStart = Date.now();
-  var fill = document.getElementById('progress-fill');
-  fill.style.width = '0%';
-  progressTimer = setInterval(function() {
-    var pct = Math.min(((Date.now() - progressStart) / SLIDE_DURATION) * 100, 100);
-    fill.style.width = pct + '%';
-    if (pct >= 100) clearInterval(progressTimer);
+  clearInterval(progressTimer); progressStart=Date.now();
+  var fill=document.getElementById('progress-fill'); fill.style.width='0%';
+  progressTimer=setInterval(function() {
+    var pct=Math.min(((Date.now()-progressStart)/SLIDE_DURATION)*100,100);
+    fill.style.width=pct+'%';
+    if (pct>=100) clearInterval(progressTimer);
   }, PROGRESS_INTERVAL);
 }
 
-// ── RENDER SLIDE ──────────────────────────────────────────────────────────
 function renderSlide(slideIdx, container) {
-  container.innerHTML = '';
-  var startFlight = slideIdx * FLIGHTS_PER_SLIDE;
-
-  for (var f = 0; f < FLIGHTS_PER_SLIDE; f++) {
-    var flightIdx = startFlight + f;
-    if (flightIdx >= TOTAL_FLIGHTS) break;
-
-    var flightNum = flightIdx + 1;
-    var style     = FLIGHT_STYLES[flightIdx];
-
-    var block = document.createElement('div');
-    block.className = 'flight-block';
-
-    // Flight label
-    var label = document.createElement('div');
-    label.className = 'flight-label';
-    label.style.background  = style.bg;
-    label.style.borderColor = style.border;
-    label.style.color       = style.label;
-    label.innerHTML =
-      '<span class="fl-word">FLIGHT</span>' +
-      '<span class="fl-num">' + flightNum + '</span>';
-
-    // Teams row
-    var teamsRow = document.createElement('div');
-    teamsRow.className = 'teams-row';
-
-    for (var t = 0; t < TEAMS_PER_FLIGHT; t++) {
-      var teamNum = flightIdx * TEAMS_PER_FLIGHT + t + 1;
-      var team    = getTeamData(teamNum);
-
-      var noBets = !team.winBets && !team.placeBets && !team.showBets;
-
-      var box = document.createElement('div');
-      box.className = 'team-box';
-      box.style.background  = style.bg;
-      box.style.borderColor = style.border;
-
-      // Top section
-      var top = document.createElement('div');
-      top.className = 'team-top';
-      top.innerHTML =
-        '<div class="team-num">#' + String(teamNum).padStart(2,'0') + '</div>' +
-        '<div class="team-name">' + esc(team.name) + '</div>' +
-        '<div class="team-total">' +
-          (noBets
-            ? '<span style="opacity:0.3">No bets yet</span>'
-            : 'Bets: <span>' + fmtMoney(team.total) + '</span>'
-          ) +
-        '</div>';
-
-      // Odds section
-      var oddsRow = document.createElement('div');
-      oddsRow.className = 'odds-row';
-      oddsRow.style.borderColor = style.border;
-
-      oddsRow.innerHTML =
-        '<div class="odds-cell win-cell' + (!team.winBets ? ' no-bets' : '') +
-          '" style="border-color:' + style.border + '">' +
-          '<span class="odds-label">Win</span>' +
-          '<span class="odds-val">' + (!team.winBets ? '—' : esc(team.winOdds)) + '</span>' +
-        '</div>' +
-        '<div class="odds-cell place-cell' + (!team.placeBets ? ' no-bets' : '') +
-          '" style="border-color:' + style.border + '">' +
-          '<span class="odds-label">Place</span>' +
-          '<span class="odds-val">' + (!team.placeBets ? '—' : esc(team.placeOdds)) + '</span>' +
-        '</div>' +
-        '<div class="odds-cell show-cell' + (!team.showBets ? ' no-bets' : '') + '">' +
-          '<span class="odds-label">Show</span>' +
-          '<span class="odds-val">' + (!team.showBets ? '—' : esc(team.showOdds)) + '</span>' +
-        '</div>';
-
-      box.appendChild(top);
-      box.appendChild(oddsRow);
-      teamsRow.appendChild(box);
+  container.innerHTML='';
+  var startFlight=slideIdx*FLIGHTS_PER_SLIDE;
+  for (var f=0;f<FLIGHTS_PER_SLIDE;f++) {
+    var flightIdx=startFlight+f;
+    if (flightIdx>=TOTAL_FLIGHTS) break;
+    var flightNum=flightIdx+1, style=FLIGHT_STYLES[flightIdx];
+    var block=document.createElement('div'); block.className='flight-block';
+    var label=document.createElement('div'); label.className='flight-label';
+    label.style.background=style.bg; label.style.borderColor=style.border; label.style.color=style.label;
+    label.innerHTML='<span class="fl-word">FLIGHT</span><span class="fl-num">'+flightNum+'</span>';
+    var teamsRow=document.createElement('div'); teamsRow.className='teams-row';
+    for (var t=0;t<TEAMS_PER_FLIGHT;t++) {
+      var teamNum=flightIdx*TEAMS_PER_FLIGHT+t+1;
+      var team=getTeamData(teamNum);
+      var noBets=!team.winBets&&!team.placeBets&&!team.showBets;
+      var box=document.createElement('div'); box.className='team-box';
+      box.style.background=style.bg; box.style.borderColor=style.border;
+      var top=document.createElement('div'); top.className='team-top';
+      top.innerHTML=
+        '<div class="team-num">#'+String(teamNum).padStart(2,'0')+'</div>'+
+        '<div class="team-name">'+esc(team.name)+'</div>'+
+        '<div class="team-total">'+(noBets?'<span style="opacity:0.3">No bets yet</span>':'Bets: <span>'+fmtMoney(team.total)+'</span>')+'</div>';
+      var oddsRow=document.createElement('div'); oddsRow.className='odds-row'; oddsRow.style.borderColor=style.border;
+      oddsRow.innerHTML=
+        '<div class="odds-cell win-cell'+(!team.winBets?' no-bets':'')+'" style="border-color:'+style.border+'">'+
+          '<span class="odds-label">Win</span><span class="odds-val">'+(!team.winBets?'—':esc(team.winOdds))+'</span></div>'+
+        '<div class="odds-cell place-cell'+(!team.placeBets?' no-bets':'')+'" style="border-color:'+style.border+'">'+
+          '<span class="odds-label">Place</span><span class="odds-val">'+(!team.placeBets?'—':esc(team.placeOdds))+'</span></div>'+
+        '<div class="odds-cell show-cell'+(!team.showBets?' no-bets':'')+'">'+
+          '<span class="odds-label">Show</span><span class="odds-val">'+(!team.showBets?'—':esc(team.showOdds))+'</span></div>';
+      box.appendChild(top); box.appendChild(oddsRow); teamsRow.appendChild(box);
     }
-
-    block.appendChild(label);
-    block.appendChild(teamsRow);
-    container.appendChild(block);
+    block.appendChild(label); block.appendChild(teamsRow); container.appendChild(block);
   }
 }
 
 function getTeamData(num) {
-  var empty = { name:'Team '+num, winOdds:'—', placeOdds:'—', showOdds:'—',
-                winBets:0, placeBets:0, showBets:0, total:0 };
-  if (!oddsData || !oddsData.teams) return empty;
-  for (var i = 0; i < oddsData.teams.length; i++) {
-    if (oddsData.teams[i].num === num) return oddsData.teams[i];
-  }
+  var empty={name:'Team '+num,winOdds:'—',placeOdds:'—',showOdds:'—',winBets:0,placeBets:0,showBets:0,total:0};
+  if (!oddsData||!oddsData.teams) return empty;
+  for (var i=0;i<oddsData.teams.length;i++) { if (oddsData.teams[i].num===num) return oddsData.teams[i]; }
   return empty;
 }
 
-function esc(s) {
-  return String(s)
-    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
-    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
-function showError(msg) {
-  var b = document.getElementById('status-bar');
-  b.textContent = '⚠ ' + msg; b.classList.add('visible');
-}
-function hideError() {
-  document.getElementById('status-bar').classList.remove('visible');
-}
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function showError(msg) { var b=document.getElementById('status-bar'); b.textContent='⚠ '+msg; b.classList.add('visible'); }
+function hideError() { document.getElementById('status-bar').classList.remove('visible'); }
 </script>
 </body>
 </html>
