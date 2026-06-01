@@ -250,7 +250,7 @@ var LOGO_SRC = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAARsAAAEcCAYAAAD3KB
 document.getElementById('site-logo').src = LOGO_SRC;
 
 // ── DEFAULTS ──────────────────────────────────────────────────────────────
-var PROXY = 'https://script.google.com/macros/s/AKfycbwsCtyqLTFsxV3sEPjOTOSri2Gm2zn933upfs0QT4ACEAN_qhyQb-aWuRijDZPIz7G3EQ/exec';
+var PROXY = 'https://classicpari.landcreations.workers.dev';
 var EVENT = 'Columbine Classic 2026 - Pari-Mutuels';
 var cfg   = { proxy: PROXY, eventName: EVENT };
 
@@ -280,7 +280,7 @@ function updateConfigStatus() {
   var btn = document.getElementById('config-btn');
   btn.classList.add('configured'); btn.textContent = '✓ CONFIGURED';
 }
-function sheetsUrl(p) { return cfg.proxy + '?' + p; }
+function sheetsUrl(p) { return cfg.proxy + '/sheets?' + p; }
 
 // ── TEAM NAMES ────────────────────────────────────────────────────────────
 var teamNames = {};
@@ -483,14 +483,19 @@ async function submitWager() {
     var url  = sheetsUrl('action=submitBet&payload=' + encodeURIComponent(JSON.stringify(payload)));
     var res  = await fetch(url);
     var data = await res.json();
-    if (data.success) { sheetOk = true; emailStatus = data.emailStatus || 'skipped'; }
-    else { toast('Sheet error: ' + (data.error || 'unknown'), 'error'); }
+    if (data.success) {
+      sheetOk     = true;
+      emailStatus = data.emailStatus || 'skipped';
+    } else {
+      toast('Sheet error: ' + (data.error || 'unknown'), 'error');
+    }
   } catch(e) { toast('Submit failed: ' + e.message, 'error'); }
 
   btn.textContent = 'PLACE WAGER';
   if (sheetOk) showReceipt(name, email, bets, betId, ts, emailStatus);
   else btn.disabled = false;
 }
+
 
 // ── RECEIPT ───────────────────────────────────────────────────────────────
 function showReceipt(name, email, bets, betId, ts, emailStatus) {
@@ -513,9 +518,11 @@ function showReceipt(name, email, bets, betId, ts, emailStatus) {
 
   var emailEl = document.getElementById('receipt-email');
   if (emailStatus === 'sent') {
-    emailEl.className = 'receipt-email sent'; emailEl.textContent = '\u2713 Email receipt sent to ' + email;
+    emailEl.className = 'receipt-email sent';
+    emailEl.textContent = '\u2713 Email receipt sent to ' + email;
   } else if (emailStatus === 'failed') {
-    emailEl.className = 'receipt-email failed'; emailEl.textContent = '\u2717 Email failed \u2014 check Apps Script logs';
+    emailEl.className = 'receipt-email failed';
+    emailEl.textContent = '\u2717 Email failed \u2014 check Apps Script logs';
   } else {
     emailEl.className = 'receipt-email skipped';
     emailEl.textContent = email ? 'Email skipped' : 'No email provided';
