@@ -280,7 +280,7 @@ function updateConfigStatus() {
   var btn = document.getElementById('config-btn');
   btn.classList.add('configured'); btn.textContent = '✓ CONFIGURED';
 }
-function sheetsUrl(p) { return cfg.proxy + '/sheets?' + p; }
+function sheetsUrl(p) { return cfg.proxy + '?' + p; }
 
 // ── TEAM NAMES ────────────────────────────────────────────────────────────
 var teamNames = {};
