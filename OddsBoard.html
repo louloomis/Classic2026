@@ -18,15 +18,15 @@
   --blue-lt:   #5B78C4;   /* lighter blue for hover/active */
   --gold:      #D4AF5A;   /* warm gold — contrast on blue */
   --gold-dim:  #8A6F2E;
-  --win:       #4A9FD4;   /* light blue for Win (differentiates from Show/Shootout) */
+  --win:       #4A9FD4;   /* light blue for Win (differentiates from place/show) */
   --win-dim:   #1A4A6E;
   --win-bg:    #0A1E2E;
-  --Show:     #7EC8A0;   /* sage green for Show */
-  --Show-dim: #2A5E3E;
-  --Show-bg:  #0A1E14;
-  --Shootout:      #C4A55B;   /* gold/amber for Shootout */
-  --Shootout-dim:  #6A5020;
-  --Shootout-bg:   #1A1408;
+  --place:     #7EC8A0;   /* sage green for Place */
+  --place-dim: #2A5E3E;
+  --place-bg:  #0A1E14;
+  --show:      #C4A55B;   /* gold/amber for Show */
+  --show-dim:  #6A5020;
+  --show-bg:   #1A1408;
   --danger:    #EF4444;
   --text:      #E8EEF8;   /* slightly blue-tinted white */
   --text-dim:  #6B7A9E;
@@ -72,8 +72,8 @@ html, body {
   padding: 10px 20px; border-radius: 4px; border: 1px solid;
 }
 .pool-chip.win   { color: var(--win);   border-color: var(--win-dim);   background: var(--win-bg); }
-.pool-chip.Show { color: var(--Show); border-color: var(--Show-dim); background: var(--Show-bg); }
-.pool-chip.Shootout  { color: var(--Shootout);  border-color: var(--Shootout-dim);  background: var(--Shootout-bg); }
+.pool-chip.place { color: var(--place); border-color: var(--place-dim); background: var(--place-bg); }
+.pool-chip.show  { color: var(--show);  border-color: var(--show-dim);  background: var(--show-bg); }
 .pool-chip.grand { color: var(--gold);  border-color: var(--gold-dim);  background: var(--blue-dim); }
 
 .header-bottom {
@@ -129,8 +129,8 @@ html, body {
 .odds-cell .odds-label { font-size: 14px; letter-spacing: 1px; opacity: 0.65; display: block; margin-bottom: 2px; text-transform: uppercase; }
 .odds-cell .odds-val   { font-size: 24px; font-weight: 500; display: block; line-height: 1; }
 .odds-cell.win-cell   { color: var(--win);   border-right: 1px solid; }
-.odds-cell.Show-cell { color: var(--Show); border-right: 1px solid; }
-.odds-cell.Shootout-cell  { color: var(--Shootout); }
+.odds-cell.place-cell { color: var(--place); border-right: 1px solid; }
+.odds-cell.show-cell  { color: var(--show); }
 .odds-cell.no-bets .odds-val { color: var(--text-dim); opacity: 0.35; font-size: 16px; }
 
 /* ── LIST SLIDES ── */
@@ -175,8 +175,8 @@ html, body {
 .list-total { font-family: var(--font-mono); font-size: 18px; font-weight: 500; color: var(--gold); text-align: right; }
 .list-odds { font-family: var(--font-mono); font-size: 18px; font-weight: 500; text-align: right; }
 .list-odds.win-odds   { color: var(--win); }
-.list-odds.Show-odds { color: var(--Show); }
-.list-odds.Shootout-odds  { color: var(--Shootout); }
+.list-odds.place-odds { color: var(--place); }
+.list-odds.show-odds  { color: var(--show); }
 .list-odds.no-bet { color: var(--text-dim); opacity: 0.3; font-size: 14px; }
 
 /* ── CONFIG ── */
@@ -222,8 +222,8 @@ html, body {
     </div>
     <div class="pools">
       <div class="pool-chip win"   id="pool-win">WIN $—</div>
-      <div class="pool-chip Show" id="pool-Show">SHOW $—</div>
-      <div class="pool-chip Shootout"  id="pool-SHOOTOUT">Shootout $—</div>
+      <div class="pool-chip place" id="pool-place">PLACE $—</div>
+      <div class="pool-chip show"  id="pool-show">SHOW $—</div>
       <div class="pool-chip grand" id="pool-grand">TOTAL $—</div>
     </div>
   </div>
@@ -310,13 +310,13 @@ function startDisplay() {
   document.getElementById('config-overlay').classList.add('hidden');
   document.getElementById('logo-text').textContent = eventName.toUpperCase();
   clearInterval(slideTimer); clearInterval(refreshTimer); clearInterval(progressTimer);
-  fetchOdds().then(function() { startSlideShootout(); });
+  fetchOdds().then(function() { startSlideshow(); });
   refreshTimer = setInterval(fetchOdds, REFRESH_INTERVAL);
-  document.addEventListener('keydown', function(e) { if (e.key === 'Escape') ShootoutConfig(); });
-  document.addEventListener('dblclick', ShootoutConfig);
+  document.addEventListener('keydown', function(e) { if (e.key === 'Escape') showConfig(); });
+  document.addEventListener('dblclick', showConfig);
 }
 
-function ShootoutConfig() {
+function showConfig() {
   clearInterval(slideTimer); clearInterval(refreshTimer); clearInterval(progressTimer);
   document.getElementById('cfg-proxy').value = proxyUrl;
   document.getElementById('cfg-event').value = eventName;
@@ -332,14 +332,14 @@ async function fetchOdds() {
       updateHeader(data.pools, data.timestamp);
       renderSlide(currentSlide, getActiveEl());
       hideError();
-    } else { ShootoutError('Sheet error: ' + (data.error || 'unknown')); }
-  } catch(e) { ShootoutError('Fetch failed: ' + e.message); }
+    } else { showError('Sheet error: ' + (data.error || 'unknown')); }
+  } catch(e) { showError('Fetch failed: ' + e.message); }
 }
 
 function updateHeader(pools, ts) {
   document.getElementById('pool-win').textContent   = 'WIN $'   + fmt(pools.win);
-  document.getElementById('pool-Show').textContent = 'SHOW $' + fmt(pools.Show);
-  document.getElementById('pool-Shootout').textContent  = 'SHOOTOUT $'  + fmt(pools.Shootout);
+  document.getElementById('pool-place').textContent = 'PLACE $' + fmt(pools.place);
+  document.getElementById('pool-show').textContent  = 'SHOW $'  + fmt(pools.show);
   document.getElementById('pool-grand').textContent = 'TOTAL $' + fmt(pools.grand);
   document.getElementById('timestamp').textContent  = 'Updated: ' + ts;
 }
@@ -347,7 +347,7 @@ function updateHeader(pools, ts) {
 function fmt(n)      { return Number(n).toLocaleString('en-US', {minimumFractionDigits:0, maximumFractionDigits:0}); }
 function fmtMoney(n) { return '$' + fmt(n); }
 
-function startSlideShootout() {
+function startSlideshow() {
   renderSlide(0, getActiveEl()); updateDots(0); updateSlideLabel(0); startProgress();
   slideTimer = setInterval(advanceSlide, SLIDE_DURATION);
 }
@@ -416,7 +416,7 @@ function renderFlightSlide(container, slideIdx) {
     var teamsRow = document.createElement('div'); teamsRow.className = 'teams-row';
     for (var t = 0; t < TEAMS_PER_FLIGHT; t++) {
       var teamNum = flightIdx*TEAMS_PER_FLIGHT+t+1, team = getTeamData(teamNum);
-      var noBets = !team.winBets && !team.ShowBets && !team.ShootoutBets;
+      var noBets = !team.winBets && !team.placeBets && !team.showBets;
       var box = document.createElement('div'); box.className = 'team-box';
       box.style.background = style.bg; box.style.borderColor = style.border;
       var top = document.createElement('div'); top.className = 'team-top';
@@ -427,8 +427,8 @@ function renderFlightSlide(container, slideIdx) {
       var oddsRow = document.createElement('div'); oddsRow.className = 'odds-row'; oddsRow.style.borderColor = style.border;
       oddsRow.innerHTML =
         '<div class="odds-cell win-cell'  +(!team.winBets  ?' no-bets':'')+'" style="border-color:'+style.border+'">'+'<span class="odds-label">Win</span><span class="odds-val">'+(!team.winBets  ?'—':esc(team.winOdds))  +'</span></div>'+
-        '<div class="odds-cell Show-cell'+(!team.ShowBets?' no-bets':'')+'" style="border-color:'+style.border+'">'+'<span class="odds-label">Show</span><span class="odds-val">'+(!team.ShowBets?'—':esc(team.ShowOdds))+'</span></div>'+
-        '<div class="odds-cell Shootout-cell' +(!team.ShootoutBets ?' no-bets':'')                                        +'">'+'<span class="odds-label">Shootout</span><span class="odds-val">'+(!team.ShootoutBets ?'—':esc(team.ShootoutOdds)) +'</span></div>';
+        '<div class="odds-cell place-cell'+(!team.placeBets?' no-bets':'')+'" style="border-color:'+style.border+'">'+'<span class="odds-label">Place</span><span class="odds-val">'+(!team.placeBets?'—':esc(team.placeOdds))+'</span></div>'+
+        '<div class="odds-cell show-cell' +(!team.showBets ?' no-bets':'')                                        +'">'+'<span class="odds-label">Show</span><span class="odds-val">'+(!team.showBets ?'—':esc(team.showOdds)) +'</span></div>';
       box.appendChild(top); box.appendChild(oddsRow); teamsRow.appendChild(box);
     }
     block.appendChild(label); block.appendChild(teamsRow); wrap.appendChild(block);
@@ -450,12 +450,12 @@ function renderListSlide(container, mode) {
     '<div class="list-header-sub" style="margin-left:auto">'+(mode==='top'?'Favorites · Sorted by total wagered ↓':'Long shots · Sorted by total wagered ↑')+'</div>';
   wrap.appendChild(hdr);
   var colLabels = document.createElement('div'); colLabels.className = 'list-col-labels';
-  colLabels.innerHTML = '<span>Rank</span><span>Team</span><span>Name</span><span>Total Bets</span><span>Win Odds</span><span>Show Odds</span><span>Shootout Odds</span>';
+  colLabels.innerHTML = '<span>Rank</span><span>Team</span><span>Name</span><span>Total Bets</span><span>Win Odds</span><span>Place Odds</span><span>Show Odds</span>';
   wrap.appendChild(colLabels);
   var rowsWrap = document.createElement('div'); rowsWrap.className = 'list-rows';
   teams.forEach(function(team,i) {
     var rankClass = i===0?'rank-1':i===1?'rank-2':i===2?'rank-3':mode==='top'?'rank-top':'rank-bot';
-    var noBets = !team.winBets && !team.ShowBets && !team.ShootoutBets;
+    var noBets = !team.winBets && !team.placeBets && !team.showBets;
     var row = document.createElement('div'); row.className = 'list-row';
     row.innerHTML =
       '<div class="rank-badge '+rankClass+'">'+(i+1)+'</div>'+
@@ -463,8 +463,8 @@ function renderListSlide(container, mode) {
       '<div class="list-team-name">'+buildNameHTML(team.name,'list-name-prefix','name-text','list-name-line')+'</div>'+
       '<div class="list-total">'+(noBets?'<span style="opacity:0.3">$0</span>':fmtMoney(team.total))+'</div>'+
       '<div class="list-odds win-odds'  +(!team.winBets  ?' no-bet':'')+'">'+(!team.winBets  ?'—':esc(team.winOdds))  +'</div>'+
-      '<div class="list-odds Show-odds'+(!team.ShowBets?' no-bet':'')+'">'+(!team.ShowBets?'—':esc(team.ShowOdds))+'</div>'+
-      '<div class="list-odds Shootout-odds' +(!team.ShootoutBets ?' no-bet':'')+'">'+(!team.ShootoutBets ?'—':esc(team.ShootoutOdds)) +'</div>';
+      '<div class="list-odds place-odds'+(!team.placeBets?' no-bet':'')+'">'+(!team.placeBets?'—':esc(team.placeOdds))+'</div>'+
+      '<div class="list-odds show-odds' +(!team.showBets ?' no-bet':'')+'">'+(!team.showBets ?'—':esc(team.showOdds)) +'</div>';
     rowsWrap.appendChild(row);
   });
   wrap.appendChild(rowsWrap); container.appendChild(wrap);
@@ -479,13 +479,13 @@ function buildNameHTML(fullName, prefixClass, textClass, lineClass) {
 }
 
 function getTeamData(num) {
-  var empty={name:'Team '+num,winOdds:'—',ShowOdds:'—',ShootoutOdds:'—',winBets:0,ShowBets:0,ShootoutBets:0,total:0};
+  var empty={name:'Team '+num,winOdds:'—',placeOdds:'—',showOdds:'—',winBets:0,placeBets:0,showBets:0,total:0};
   if (!oddsData||!oddsData.teams) return empty;
   for (var i=0;i<oddsData.teams.length;i++) { if (oddsData.teams[i].num===num) return oddsData.teams[i]; }
   return empty;
 }
-function esc(s) { return String(s).reShow(/&/g,'&amp;').reShow(/</g,'&lt;').reShow(/>/g,'&gt;').reShow(/"/g,'&quot;'); }
-function ShootoutError(msg) { var b=document.getElementById('status-bar'); b.textContent='⚠ '+msg; b.classList.add('visible'); }
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function showError(msg) { var b=document.getElementById('status-bar'); b.textContent='⚠ '+msg; b.classList.add('visible'); }
 function hideError()    { document.getElementById('status-bar').classList.remove('visible'); }
 </script>
 </body>
