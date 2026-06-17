@@ -222,8 +222,8 @@ html, body {
     </div>
     <div class="pools">
       <div class="pool-chip win"   id="pool-win">WIN $—</div>
-      <div class="pool-chip Show" id="pool-Show">Show $—</div>
-      <div class="pool-chip Shootout"  id="pool-Shootout">Shootout $—</div>
+      <div class="pool-chip Show" id="pool-Show">SHOW $—</div>
+      <div class="pool-chip Shootout"  id="pool-SHOOTOUT">Shootout $—</div>
       <div class="pool-chip grand" id="pool-grand">TOTAL $—</div>
     </div>
   </div>
@@ -338,8 +338,8 @@ async function fetchOdds() {
 
 function updateHeader(pools, ts) {
   document.getElementById('pool-win').textContent   = 'WIN $'   + fmt(pools.win);
-  document.getElementById('pool-Show').textContent = 'Show $' + fmt(pools.Show);
-  document.getElementById('pool-Shootout').textContent  = 'Shootout $'  + fmt(pools.Shootout);
+  document.getElementById('pool-Show').textContent = 'SHOW $' + fmt(pools.Show);
+  document.getElementById('pool-Shootout').textContent  = 'SHOOTOUT $'  + fmt(pools.Shootout);
   document.getElementById('pool-grand').textContent = 'TOTAL $' + fmt(pools.grand);
   document.getElementById('timestamp').textContent  = 'Updated: ' + ts;
 }
