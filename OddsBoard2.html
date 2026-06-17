@@ -21,12 +21,12 @@
   --win:       #1470A8;
   --win-dim:   #0A4070;
   --win-bg:    #E8F3FA;
-  --place:     #1A7A48;
-  --place-dim: #0F5030;
-  --place-bg:  #E8F7EF;
-  --show:      #9A6A0A;
-  --show-dim:  #6A4808;
-  --show-bg:   #FBF4E0;
+  --show:     #1A7A48;
+  --show-dim: #0F5030;
+  --show-bg:  #E8F7EF;
+  --shootout:      #9A6A0A;
+  --shootout-dim:  #6A4808;
+  --shootout-bg:   #FBF4E0;
   --danger:    #C0252A;
   --text:      #1A2240;
   --text-dim:  #7080A8;
@@ -64,8 +64,8 @@ html, body {
   padding: 10px 20px; border-radius: 4px; border: 1px solid;
 }
 .pool-chip.win   { color: var(--win);   border-color: var(--win-dim);   background: var(--win-bg); }
-.pool-chip.place { color: var(--place); border-color: var(--place-dim); background: var(--place-bg); }
-.pool-chip.show  { color: var(--show);  border-color: var(--show-dim);  background: var(--show-bg); }
+.pool-chip.place { color: var(--show); border-color: var(--show-dim); background: var(--show-bg); }
+.pool-chip.show  { color: var(--shootout);  border-color: var(--shootout-dim);  background: var(--shootout-bg); }
 .pool-chip.grand { color: #D4AF5A;      border-color: #8A6F2E;          background: var(--blue-dim); }
 .header-bottom {
   display: flex; align-items: center; padding: 4px 20px 6px; gap: 16px;
@@ -111,8 +111,8 @@ html, body {
 .odds-cell .odds-label { font-size: 14px; letter-spacing: 1px; opacity: 0.6; display: block; margin-bottom: 2px; text-transform: uppercase; }
 .odds-cell .odds-val   { font-size: 24px; font-weight: 500; display: block; line-height: 1; }
 .odds-cell.win-cell   { color: var(--win);   border-right: 1px solid; }
-.odds-cell.place-cell { color: var(--place); border-right: 1px solid; }
-.odds-cell.show-cell  { color: var(--show); }
+.odds-cell.show-cell { color: var(--show); border-right: 1px solid; }
+.odds-cell.shootout-cell  { color: var(--shootout); }
 .odds-cell.no-bets .odds-val { color: var(--text-dim); opacity: 0.4; font-size: 16px; }
 .list-slide { height: 100%; display: flex; flex-direction: column; overflow: hidden; }
 .list-header { display: flex; align-items: center; gap: 16px; padding: 10px 16px; border-radius: 8px; margin-bottom: 10px; flex-shrink: 0; }
@@ -152,8 +152,8 @@ html, body {
 .list-total { font-family: var(--font-mono); font-size: 18px; font-weight: 500; color: var(--gold); text-align: right; }
 .list-odds { font-family: var(--font-mono); font-size: 18px; font-weight: 500; text-align: right; }
 .list-odds.win-odds   { color: var(--win); }
-.list-odds.place-odds { color: var(--place); }
-.list-odds.show-odds  { color: var(--show); }
+.list-odds.place-odds { color: var(--show); }
+.list-odds.show-odds  { color: var(--shootout); }
 .list-odds.no-bet { color: var(--text-dim); opacity: 0.4; font-size: 14px; }
 #config-overlay { position: fixed; inset: 0; background: rgba(235,240,255,0.97); z-index: 500; display: flex; align-items: center; justify-content: center; }
 #config-overlay.hidden { display: none; }
@@ -195,8 +195,8 @@ html, body {
     </div>
     <div class="pools">
       <div class="pool-chip win"   id="pool-win">WIN $—</div>
-      <div class="pool-chip place" id="pool-place">PLACE $—</div>
-      <div class="pool-chip show"  id="pool-show">SHOW $—</div>
+      <div class="pool-chip show" id="pool-show">PLACE $—</div>
+      <div class="pool-chip shootout"  id="pool-shootout">SHOW $—</div>
       <div class="pool-chip grand" id="pool-grand">TOTAL $—</div>
     </div>
   </div>
@@ -273,8 +273,8 @@ async function fetchOdds(){
 }
 function updateHeader(pools,ts){
   document.getElementById('pool-win').textContent='WIN $'+fmt(pools.win);
-  document.getElementById('pool-place').textContent='PLACE $'+fmt(pools.place);
   document.getElementById('pool-show').textContent='SHOW $'+fmt(pools.show);
+  document.getElementById('pool-shootout').textContent='SHOOT-OUT $'+fmt(pools.shootout);
   document.getElementById('pool-grand').textContent='TOTAL $'+fmt(pools.grand);
   document.getElementById('timestamp').textContent='Updated: '+ts;
 }
@@ -341,7 +341,7 @@ function renderFlightSlide(container,slideIdx){
     var teamsRow=document.createElement('div');teamsRow.className='teams-row';
     for(var t=0;t<TEAMS_PER_FLIGHT;t++){
       var teamNum=flightIdx*TEAMS_PER_FLIGHT+t+1,team=getTeamData(teamNum);
-      var noBets=!team.winBets&&!team.placeBets&&!team.showBets;
+      var noBets=!team.winBets&&!team.showBets&&!team.shootoutBets;
       var box=document.createElement('div');box.className='team-box';
       box.style.background=style.bg;box.style.borderColor=style.border;
       var top=document.createElement('div');top.className='team-top';
@@ -352,8 +352,8 @@ function renderFlightSlide(container,slideIdx){
       var oddsRow=document.createElement('div');oddsRow.className='odds-row';oddsRow.style.borderColor=style.border;
       oddsRow.innerHTML=
         '<div class="odds-cell win-cell'+(!team.winBets?' no-bets':'')+'" style="border-color:'+style.border+'">'+'<span class="odds-label">Win</span><span class="odds-val">'+(!team.winBets?'—':esc(team.winOdds))+'</span></div>'+
-        '<div class="odds-cell place-cell'+(!team.placeBets?' no-bets':'')+'" style="border-color:'+style.border+'">'+'<span class="odds-label">Place</span><span class="odds-val">'+(!team.placeBets?'—':esc(team.placeOdds))+'</span></div>'+
-        '<div class="odds-cell show-cell'+(!team.showBets?' no-bets':'')+'">'+'<span class="odds-label">Show</span><span class="odds-val">'+(!team.showBets?'—':esc(team.showOdds))+'</span></div>';
+        '<div class="odds-cell show-cell'+(!team.showBets?' no-bets':'')+'" style="border-color:'+style.border+'">'+'<span class="odds-label">Show</span><span class="odds-val">'+(!team.showBets?'—':esc(team.showOdds))+'</span></div>'+
+        '<div class="odds-cell shootout-cell'+(!team.shootoutBets?' no-bets':'')+'">'+'<span class="odds-label">Shoot-Out</span><span class="odds-val">'+(!team.shootoutBets?'—':esc(team.shootoutOdds))+'</span></div>';
       box.appendChild(top);box.appendChild(oddsRow);teamsRow.appendChild(box);
     }
     block.appendChild(label);block.appendChild(teamsRow);wrap.appendChild(block);
@@ -375,7 +375,7 @@ function renderListSlide(container,mode){
   var rowsWrap=document.createElement('div');rowsWrap.className='list-rows';
   teams.forEach(function(team,i){
     var rankClass=i===0?'rank-1':i===1?'rank-2':i===2?'rank-3':mode==='top'?'rank-top':'rank-bot';
-    var noBets=!team.winBets&&!team.placeBets&&!team.showBets;
+    var noBets=!team.winBets&&!team.showBets&&!team.shootoutBets;
     var row=document.createElement('div');row.className='list-row';
     row.innerHTML=
       '<div class="rank-badge '+rankClass+'">'+(i+1)+'</div>'+
@@ -383,8 +383,8 @@ function renderListSlide(container,mode){
       '<div class="list-team-name">'+buildNameHTML(team.name,'list-name-prefix','name-text','list-name-line','')+'</div>'+
       '<div class="list-total">'+(noBets?'<span style="opacity:0.3">$0</span>':fmtMoney(team.total))+'</div>'+
       '<div class="list-odds win-odds'+(!team.winBets?' no-bet':'')+'">'+(!team.winBets?'—':esc(team.winOdds))+'</div>'+
-      '<div class="list-odds place-odds'+(!team.placeBets?' no-bet':'')+'">'+(!team.placeBets?'—':esc(team.placeOdds))+'</div>'+
-      '<div class="list-odds show-odds'+(!team.showBets?' no-bet':'')+'">'+(!team.showBets?'—':esc(team.showOdds))+'</div>';
+      '<div class="list-odds place-odds'+(!team.showBets?' no-bet':'')+'">'+(!team.showBets?'—':esc(team.showOdds))+'</div>'+
+      '<div class="list-odds show-odds'+(!team.shootoutBets?' no-bet':'')+'">'+(!team.shootoutBets?'—':esc(team.shootoutOdds))+'</div>';
     rowsWrap.appendChild(row);
   });
   wrap.appendChild(rowsWrap);container.appendChild(wrap);
@@ -398,7 +398,7 @@ function buildNameHTML(fullName,prefixClass,textClass,lineClass,color){
          '<div class="'+lineClass+'"><span class="'+prefixClass+'" '+style+'>G:</span><span class="'+textClass+'">'+esc(p2)+'</span></div>';
 }
 function getTeamData(num){
-  var empty={name:'Team '+num,winOdds:'—',placeOdds:'—',showOdds:'—',winBets:0,placeBets:0,showBets:0,total:0};
+  var empty={name:'Team '+num,winOdds:'—',showOdds:'—',shootoutOdds:'—',winBets:0,showBets:0,shootoutBets:0,total:0};
   if(!oddsData||!oddsData.teams)return empty;
   for(var i=0;i<oddsData.teams.length;i++){if(oddsData.teams[i].num===num)return oddsData.teams[i];}
   return empty;
