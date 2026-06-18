@@ -230,8 +230,8 @@
 
   <div class="section-label">Wagers</div>
   
-<div class="cash-row" id="cash-row" onclick="toggleCash()">
-  <input type="checkbox" id="cash-received" checked>
+<div class="cash-row" id="cash-row">
+  <input type="checkbox" id="cash-received" checked onchange="updateCashRow()">
   <span class="cash-label" id="cash-label">💵 Cash received</span>
 </div>
 
@@ -601,8 +601,7 @@ function resetForm() {
   document.getElementById('submit-btn').disabled = true;
   addRow(false);
   document.getElementById('cash-received').checked = true;
-  document.getElementById('cash-row').classList.remove('owed');
-  document.getElementById('cash-label').textContent = '💵 Cash received';
+  updateCashRow();
   document.getElementById('bettor-name').focus();
 }
 
@@ -693,11 +692,10 @@ function startRunningTotalRefresh() {
 }
 
 // ── CASH CHECKBOX ─────────────────────────────────────────────────────────
-function toggleCash() {
+function updateCashRow() {
   var cb  = document.getElementById('cash-received');
   var row = document.getElementById('cash-row');
   var lbl = document.getElementById('cash-label');
-  cb.checked = !cb.checked;
   if (cb.checked) {
     row.classList.remove('owed');
     lbl.textContent = '💵 Cash received';
