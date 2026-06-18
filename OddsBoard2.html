@@ -64,8 +64,8 @@ html, body {
   padding: 10px 20px; border-radius: 4px; border: 1px solid;
 }
 .pool-chip.win   { color: var(--win);   border-color: var(--win-dim);   background: var(--win-bg); }
-.pool-chip.place { color: var(--show); border-color: var(--show-dim); background: var(--show-bg); }
-.pool-chip.show  { color: var(--shootout);  border-color: var(--shootout-dim);  background: var(--shootout-bg); }
+.pool-chip.show  { color: var(--show); border-color: var(--show-dim); background: var(--show-bg); }
+.pool-chip.shootout { color: var(--shootout); border-color: var(--shootout-dim); background: var(--shootout-bg); }
 .pool-chip.grand { color: #D4AF5A;      border-color: #8A6F2E;          background: var(--blue-dim); }
 .header-bottom {
   display: flex; align-items: center; padding: 4px 20px 6px; gap: 16px;
@@ -195,8 +195,8 @@ html, body {
     </div>
     <div class="pools">
       <div class="pool-chip win"   id="pool-win">WIN $—</div>
-      <div class="pool-chip show" id="pool-show">PLACE $—</div>
-      <div class="pool-chip shootout"  id="pool-shootout">SHOW $—</div>
+      <div class="pool-chip show" id="pool-show">SHOW $—</div>
+      <div class="pool-chip shootout" id="pool-shootout">SHOOT-OUT $—</div>
       <div class="pool-chip grand" id="pool-grand">TOTAL $—</div>
     </div>
   </div>
@@ -353,7 +353,7 @@ function renderFlightSlide(container,slideIdx){
       oddsRow.innerHTML=
         '<div class="odds-cell win-cell'+(!team.winBets?' no-bets':'')+'" style="border-color:'+style.border+'">'+'<span class="odds-label">Win</span><span class="odds-val">'+(!team.winBets?'—':esc(team.winOdds))+'</span></div>'+
         '<div class="odds-cell show-cell'+(!team.showBets?' no-bets':'')+'" style="border-color:'+style.border+'">'+'<span class="odds-label">Show</span><span class="odds-val">'+(!team.showBets?'—':esc(team.showOdds))+'</span></div>'+
-        '<div class="odds-cell shootout-cell'+(!team.shootoutBets?' no-bets':'')+'">'+'<span class="odds-label">Shoot-Out</span><span class="odds-val">'+(!team.shootoutBets?'—':esc(team.shootoutOdds))+'</span></div>';
+        '<div class="odds-cell shootout-cell'+(!team.shootoutBets?' no-bets':'')+'">'+'<span class="odds-label">S-O</span><span class="odds-val">'+(!team.shootoutBets?'—':esc(team.shootoutOdds))+'</span></div>';
       box.appendChild(top);box.appendChild(oddsRow);teamsRow.appendChild(box);
     }
     block.appendChild(label);block.appendChild(teamsRow);wrap.appendChild(block);
