@@ -174,7 +174,7 @@
   <div class="bettor-row">
     <div class="field">
       <label>Full Name *</label>
-      <input type="text" id="bettor-name" placeholder="e.g. Casey Johnson" autocomplete="off" oninput="refreshSubmit()">
+      <input type="text" id="bettor-name" placeholder="e.g. Casey Johnson" autocomplete="off" oninput="refreshSubmit(); scheduleEmailLookup()">
     </div>
     <div class="field">
       <label>Email (receipt)</label>
@@ -560,6 +560,52 @@ document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('bettor-name').focus();
   fetchTeamNames();
 });
+
+// ── EMAIL AUTOFILL ─────────────────────────────────────────────────────────
+// When bettor name is typed, look up a matching email from Bets Log history.
+// Uses starts-with matching (case-insensitive). Fires 600ms after typing stops.
+
+var emailLookupTimer = null;
+var emailAutoFilled  = false;  // track whether current email was auto-filled
+
+function scheduleEmailLookup() {
+  clearTimeout(emailLookupTimer);
+  var nameVal = document.getElementById('bettor-name').value.trim();
+  // Clear auto-filled email if name is cleared or changed significantly
+  if (emailAutoFilled && nameVal.length === 0) {
+    document.getElementById('bettor-email').value = '';
+    emailAutoFilled = false;
+  }
+  if (nameVal.length < 2) return;  // wait for at least 2 chars
+  emailLookupTimer = setTimeout(function() { lookupEmail(nameVal); }, 600);
+}
+
+async function lookupEmail(namePrefix) {
+  // Don't overwrite if user has already typed their own email
+  var emailField = document.getElementById('bettor-email');
+  if (emailField.value.trim() && !emailAutoFilled) return;
+
+  try {
+    var url = cfg.proxy + '/sheets?action=getBettorEmail&name=' + encodeURIComponent(namePrefix);
+    var res  = await fetch(url);
+    var data = await res.json();
+    if (data.success && data.email) {
+      emailField.value = data.email;
+      emailAutoFilled  = true;
+      toast('Email auto-filled from previous bet', 'success');
+    }
+  } catch(e) {
+    // Silently fail — email autofill is optional
+  }
+}
+
+// Reset auto-fill flag if user manually edits the email field
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('bettor-email').addEventListener('input', function() {
+    emailAutoFilled = false;
+  });
+});
+
 </script>
 </body>
 </html>
