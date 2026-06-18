@@ -150,6 +150,45 @@
   #toast.success { border-color: var(--win); color: var(--win); }
   #toast.error   { border-color: var(--danger); color: var(--danger); }
   #toast.info    { border-color: var(--gold); color: var(--gold); }
+
+/* ── Running total bar ── */
+#running-total-bar {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 10px 16px;
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 12px; gap: 12px;
+}
+#running-total-bar .rt-label {
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--text-dim);
+}
+#running-total-bar .rt-amount {
+  font-family: var(--font-head); font-size: 26px; color: var(--gold);
+  letter-spacing: 1px;
+}
+#running-total-bar .rt-refresh {
+  font-family: var(--font-mono); font-size: 10px; color: var(--text-dim);
+  cursor: pointer; background: none; border: none; padding: 4px 8px;
+  border-radius: 4px; transition: color 0.2s;
+}
+#running-total-bar .rt-refresh:hover { color: var(--text); }
+
+/* ── Cash checkbox ── */
+.cash-row {
+  display: flex; align-items: center; gap: 10px;
+  margin-top: 10px; padding: 10px 12px;
+  border-radius: var(--radius); border: 1px solid var(--border);
+  background: var(--surface); cursor: pointer; user-select: none;
+}
+.cash-row input[type=checkbox] { width: 18px; height: 18px; accent-color: var(--win); cursor: pointer; flex-shrink: 0; }
+.cash-row .cash-label { font-family: var(--font-mono); font-size: 11px; letter-spacing: 1px; color: var(--text); }
+.cash-row.owed { border-color: var(--danger); background: #1a0808; }
+.cash-row.owed .cash-label { color: var(--danger); }
+.receipt-cash { font-family: var(--font-mono); font-size: 11px; padding: 7px 14px;
+  border-radius: 20px; margin-bottom: 10px; text-align: center; }
+.receipt-cash.paid { background: var(--win-bg); color: var(--win); border: 1px solid var(--win-dim); }
+.receipt-cash.owed { background: #2a0a0a; color: var(--danger); border: 1px solid #7f1d1d; }
+
 </style>
 </head>
 <body>
@@ -165,7 +204,14 @@
     </div>
   </header>
 
-  <div id="names-status">
+  
+<div id="running-total-bar">
+  <span class="rt-label">Total Wagered Tonight</span>
+  <span class="rt-amount" id="rt-amount">—</span>
+  <button class="rt-refresh" onclick="fetchRunningTotal()" title="Refresh">↻ REFRESH</button>
+</div>
+
+<div id="names-status">
     <span id="names-status-text">⏳ Loading team names…</span>
     <button class="btn-reload" onclick="fetchTeamNames()">↻ RELOAD</button>
   </div>
@@ -183,7 +229,13 @@
   </div>
 
   <div class="section-label">Wagers</div>
-  <div class="bet-cols-header">
+  
+<div class="cash-row" id="cash-row" onclick="toggleCash()">
+  <input type="checkbox" id="cash-received" checked>
+  <span class="cash-label" id="cash-label">💵 Cash received</span>
+</div>
+
+<div class="bet-cols-header">
     <span>Team # / Name</span>
     <span class="lbl-win">Win ($)</span>
     <span class="lbl-place">Place ($)</span>
@@ -222,6 +274,7 @@
     <div class="receipt-id" id="receipt-id"></div>
     <div class="receipt-detail" id="receipt-detail"></div>
     <div class="receipt-email" id="receipt-email"></div>
+    <div class="receipt-cash" id="receipt-cash"></div>
     <button class="btn-next" onclick="resetForm()">NEXT BETTOR</button>
   </div>
 </div>
@@ -265,7 +318,8 @@ function saveConfig() {
   cfg.proxy     = document.getElementById('cfg-proxy-url').value.trim()  || PROXY;
   cfg.eventName = document.getElementById('cfg-event-name').value.trim() || EVENT;
   localStorage.setItem('wagering_cfg2', JSON.stringify(cfg));
-  closeConfig(); updateConfigStatus(); fetchTeamNames(); toast('Config saved', 'success');
+  closeConfig(); updateConfigStatus(); fetchTeamNames();
+  startRunningTotalRefresh(); toast('Config saved', 'success');
 }
 function openConfig() {
   document.getElementById('cfg-proxy-url').value  = cfg.proxy;
@@ -457,6 +511,7 @@ function refreshSubmit() {
 // ── SUBMIT ────────────────────────────────────────────────────────────────
 async function submitWager() {
   var name  = document.getElementById('bettor-name').value.trim();
+  var cashReceived = document.getElementById('cash-received').checked;
   var email = document.getElementById('bettor-email').value.trim();
   if (!name) { toast('Enter bettor name first', 'error'); return; }
 
@@ -479,7 +534,7 @@ async function submitWager() {
   var sheetOk = false, emailStatus = 'skipped';
 
   try {
-    var payload = { bettorName: name, email: email, bets: bets, betId: betId, timestamp: ts };
+    var payload = { bettorName: name, email: email, bets: bets, betId: betId, timestamp: ts, cashReceived: cashReceived };
     var url  = sheetsUrl('action=submitBet&payload=' + encodeURIComponent(JSON.stringify(payload)));
     var res  = await fetch(url);
     var data = await res.json();
@@ -492,13 +547,13 @@ async function submitWager() {
   } catch(e) { toast('Submit failed: ' + e.message, 'error'); }
 
   btn.textContent = 'PLACE WAGER';
-  if (sheetOk) showReceipt(name, email, bets, betId, ts, emailStatus);
+  if (sheetOk) showReceipt(name, email, bets, betId, ts, emailStatus, cashReceived);
   else btn.disabled = false;
 }
 
 
 // ── RECEIPT ───────────────────────────────────────────────────────────────
-function showReceipt(name, email, bets, betId, ts, emailStatus) {
+function showReceipt(name, email, bets, betId, ts, emailStatus, cashReceived) {
   var total = bets.reduce(function(a, b) { return a + b.win + b.place + b.show; }, 0);
   document.getElementById('receipt-id').textContent = betId + ' \u00b7 ' + ts;
   var detail = '<div><strong>' + name + '</strong></div>';
@@ -527,6 +582,12 @@ function showReceipt(name, email, bets, betId, ts, emailStatus) {
     emailEl.className = 'receipt-email skipped';
     emailEl.textContent = email ? 'Email skipped' : 'No email provided';
   }
+  var cashEl = document.getElementById('receipt-cash');
+  if (cashReceived) {
+    cashEl.className = 'receipt-cash paid'; cashEl.textContent = '✓ Cash received';
+  } else {
+    cashEl.className = 'receipt-cash owed'; cashEl.textContent = '⚠️ Cash owed — collect later';
+  }
   document.getElementById('receipt-modal').classList.add('open');
 }
 
@@ -539,6 +600,9 @@ function resetForm() {
   document.getElementById('summary-panel').classList.remove('visible');
   document.getElementById('submit-btn').disabled = true;
   addRow(false);
+  document.getElementById('cash-received').checked = true;
+  document.getElementById('cash-row').classList.remove('owed');
+  document.getElementById('cash-label').textContent = '💵 Cash received';
   document.getElementById('bettor-name').focus();
 }
 
@@ -605,6 +669,43 @@ document.addEventListener('DOMContentLoaded', function() {
     emailAutoFilled = false;
   });
 });
+
+
+// ── RUNNING TOTAL ─────────────────────────────────────────────────────────
+var runningTotalTimer = null;
+
+async function fetchRunningTotal() {
+  try {
+    var url  = sheetsUrl('action=getTotals');
+    var res  = await fetch(url);
+    var data = await res.json();
+    if (data.success) {
+      document.getElementById('rt-amount').textContent = '$' + data.grandTotal.toFixed(2);
+    }
+  } catch(e) {
+    // Silently fail — non-critical
+  }
+}
+
+function startRunningTotalRefresh() {
+  fetchRunningTotal();
+  runningTotalTimer = setInterval(fetchRunningTotal, 30000);
+}
+
+// ── CASH CHECKBOX ─────────────────────────────────────────────────────────
+function toggleCash() {
+  var cb  = document.getElementById('cash-received');
+  var row = document.getElementById('cash-row');
+  var lbl = document.getElementById('cash-label');
+  cb.checked = !cb.checked;
+  if (cb.checked) {
+    row.classList.remove('owed');
+    lbl.textContent = '💵 Cash received';
+  } else {
+    row.classList.add('owed');
+    lbl.textContent = '⚠️ Owes cash — collect later';
+  }
+}
 
 </script>
 </body>
