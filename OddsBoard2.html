@@ -74,10 +74,8 @@ html, body {
 .slide-dots { display: flex; gap: 6px; align-items: center; }
 .dot { width: 28px; height: 4px; border-radius: 2px; background: rgba(255,255,255,0.25); transition: background 0.3s; flex-shrink: 0; }
 .dot.active  { background: #D4AF5A; }
-.dot.top20   { background: #5B9FD4; opacity: 0.5; }
-.dot.bot20   { background: #E07878; opacity: 0.5; }
-.dot.active.top20 { opacity: 1; }
-.dot.active.bot20 { opacity: 1; }
+.dot.combined { background: #D4AF5A; opacity: 0.5; }
+.dot.active.combined { opacity: 1; }
 .slide-label { font-family: var(--font-mono); font-size: 12px; color: rgba(255,255,255,0.6); letter-spacing: 2px; }
 .timestamp { font-family: var(--font-mono); font-size: 11px; color: rgba(255,255,255,0.45); margin-left: auto; }
 #progress-bar { height: 3px; background: rgba(0,0,0,0.08); position: relative; overflow: hidden; }
@@ -101,7 +99,7 @@ html, body {
 .team-top { padding: 6px 8px 4px; display: flex; flex-direction: column; gap: 2px; flex: 1; }
 .team-num { font-family: var(--font-head); font-size: 22px; line-height: 1; }
 .team-names { display: flex; flex-direction: column; gap: 1px; margin-top: 1px; }
-.name-line { font-family: var(--font-body); font-size: 18px; font-weight: 500; color: var(--text); line-height: 1.25; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; gap: 3px; align-items: baseline; }
+.name-line { font-family: var(--font-body); font-size: 18px; font-weight: 500; color: var(--text); line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; gap: 3px; align-items: baseline; }
 .name-prefix { font-family: var(--font-mono); font-size: 14px; font-weight: 500; opacity: 0.65; flex-shrink: 0; letter-spacing: 0.5px; }
 .name-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .team-total { font-family: var(--font-mono); font-size: 22px; font-weight: 500; color: var(--text-dim); margin-top: 3px; }
@@ -168,6 +166,39 @@ html, body {
 .btn-start:hover { background: var(--blue-dim); }
 #status-bar { position: fixed; bottom: 0; left: 0; right: 0; background: #FDE8E8; border-top: 1px solid #C07070; color: var(--danger); font-family: var(--font-mono); font-size: 11px; padding: 6px 16px; display: none; }
 #status-bar.visible { display: block; }
+
+.combined-slide { height: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.combined-panel { display: flex; flex-direction: column; overflow: hidden; }
+.list-row-compact {
+  display: grid; grid-template-columns: 32px 40px 1fr 90px 80px 80px 80px;
+  gap: 4px; padding: 4px 8px; border-radius: 4px;
+  border: 1px solid var(--border); align-items: center;
+  flex-shrink: 0; background: var(--surface); font-size: 12px;
+}
+.list-row-compact:nth-child(odd) { background: #F0F3FB; }
+.list-rows-compact { flex: 1; overflow: hidden; display: flex; flex-direction: column; gap: 2px; }
+.list-col-labels-compact {
+  display: grid; grid-template-columns: 32px 40px 1fr 90px 80px 80px 80px;
+  gap: 4px; padding: 0 8px 4px; border-bottom: 1px solid var(--border);
+  flex-shrink: 0; margin-bottom: 2px;
+}
+.list-col-labels-compact span { font-family: var(--font-mono); font-size: 8px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-dim); text-align: right; }
+.list-col-labels-compact span:nth-child(3) { text-align: left; }
+.list-header-compact { display: flex; align-items: center; gap: 8px; padding: 6px 10px; border-radius: 6px; margin-bottom: 6px; flex-shrink: 0; }
+.list-header-compact.top    { background: var(--win-bg);   border: 1px solid var(--win-dim); }
+.list-header-compact.bottom { background: #FDE8E8;          border: 1px solid #C07070; }
+.list-header-compact .list-header-title { font-family: var(--font-head); font-size: 22px; letter-spacing: 2px; }
+.list-header-compact.top    .list-header-title { color: var(--win); }
+.list-header-compact.bottom .list-header-title { color: var(--danger); }
+.rank-badge-sm { font-family: var(--font-head); font-size: 16px; text-align: center; line-height: 1; }
+.list-team-num-sm { font-family: var(--font-head); font-size: 14px; color: var(--gold); text-align: center; line-height: 1; }
+.list-name-single { font-family: var(--font-body); font-size: 12px; font-weight: 500; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.list-total-sm { font-family: var(--font-mono); font-size: 13px; font-weight: 500; color: var(--gold); text-align: right; }
+.list-odds-sm { font-family: var(--font-mono); font-size: 13px; font-weight: 500; text-align: right; }
+.list-odds-sm.win-odds   { color: var(--win); }
+.list-odds-sm.place-odds { color: var(--show); }
+.list-odds-sm.show-odds  { color: var(--shootout); }
+.list-odds-sm.no-bet { color: var(--text-dim); opacity: 0.4; font-size: 11px; }
 </style>
 </head>
 <body>
@@ -213,9 +244,9 @@ html, body {
 <script>
 var DEFAULT_PROXY = 'https://classicpari.landcreations.workers.dev';
 var DEFAULT_EVENT = 'Columbine Classic 2026';
-var TOTAL_SLIDES=6,FLIGHTS_PER_SLIDE=4,TEAMS_PER_FLIGHT=6,TOTAL_FLIGHTS=16;
-var SLIDE_DURATION=10000,REFRESH_INTERVAL=30000,PROGRESS_INTERVAL=50;
-var SLIDE_TYPES=['flights','flights','flights','flights','top20','bottom20'];
+var TOTAL_SLIDES=5,FLIGHTS_PER_SLIDE=4,TEAMS_PER_FLIGHT=6,TOTAL_FLIGHTS=16;
+var SLIDE_DURATIONS=[10000,10000,10000,10000,20000],REFRESH_INTERVAL=30000,PROGRESS_INTERVAL=50;
+var SLIDE_TYPES=['flights','flights','flights','flights','combined'];
 var FLIGHT_STYLES=[
   {bg:"#EEF2FC",border:"#4A68C8",label:"#2A48A8"},
   {bg:"#EEF8F2",border:"#2A8A50",label:"#1A6A38"},
@@ -242,7 +273,7 @@ window.addEventListener('DOMContentLoaded',function(){
   document.getElementById('cfg-proxy').value=proxyUrl;
   document.getElementById('cfg-event').value=eventName;
   var dots=document.getElementById('slide-dots');
-  for(var i=0;i<TOTAL_SLIDES;i++){var d=document.createElement('div');var extra=i===4?' top20':i===5?' bot20':'';d.className='dot'+extra+(i===0?' active':'');d.id='dot-'+i;dots.appendChild(d);}
+  for(var i=0;i<TOTAL_SLIDES;i++){var d=document.createElement('div');var extra=i===4?' combined':'';d.className='dot'+extra+(i===0?' active':'');d.id='dot-'+i;dots.appendChild(d);}
   startDisplay();
 });
 function startDisplay(){
@@ -251,14 +282,14 @@ function startDisplay(){
   localStorage.setItem('oddsboard_cfg2',JSON.stringify({proxy:proxyUrl,eventName:eventName}));
   document.getElementById('config-overlay').classList.add('hidden');
   document.getElementById('logo-text').textContent=eventName.toUpperCase();
-  clearInterval(slideTimer);clearInterval(refreshTimer);clearInterval(progressTimer);
+  clearTimeout(slideTimer);clearInterval(refreshTimer);clearInterval(progressTimer);
   fetchOdds().then(function(){startSlideshow();});
   refreshTimer=setInterval(fetchOdds,REFRESH_INTERVAL);
   document.addEventListener('keydown',function(e){if(e.key==='Escape')showConfig();});
   document.addEventListener('dblclick',showConfig);
 }
 function showConfig(){
-  clearInterval(slideTimer);clearInterval(refreshTimer);clearInterval(progressTimer);
+  clearTimeout(slideTimer);clearInterval(refreshTimer);clearInterval(progressTimer);
   document.getElementById('cfg-proxy').value=proxyUrl;
   document.getElementById('cfg-event').value=eventName;
   document.getElementById('config-overlay').classList.remove('hidden');
@@ -281,10 +312,12 @@ function updateHeader(pools,ts){
 function fmt(n){return Number(n).toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0});}
 function fmtMoney(n){return '$'+fmt(n);}
 function startSlideshow(){
+  currentSlide=0;
   renderSlide(0,getActiveEl());updateDots(0);updateSlideLabel(0);startProgress();
-  slideTimer=setInterval(advanceSlide,SLIDE_DURATION);
+  slideTimer=setTimeout(function(){advanceSlide();},SLIDE_DURATIONS[0]);
 }
 function advanceSlide(){
+  clearTimeout(slideTimer);
   var nextSlide=(currentSlide+1)%TOTAL_SLIDES,nextEl=activeEl==='a'?'b':'a';
   renderSlide(nextSlide,document.getElementById('slide-'+nextEl));
   document.getElementById('slide-'+activeEl).classList.remove('visible');
@@ -293,19 +326,19 @@ function advanceSlide(){
   document.getElementById('slide-'+nextEl).classList.add('visible');
   activeEl=nextEl;currentSlide=nextSlide;
   updateDots(currentSlide);updateSlideLabel(currentSlide);startProgress();
+  slideTimer=setTimeout(function(){advanceSlide();},SLIDE_DURATIONS[currentSlide]);
 }
 function getActiveEl(){return document.getElementById('slide-'+activeEl);}
 function updateDots(idx){
   for(var i=0;i<TOTAL_SLIDES;i++){
     var d=document.getElementById('dot-'+i);if(!d)continue;
-    var extra=i===4?' top20':i===5?' bot20':'';
+    var extra=i===4?' combined':'';
     d.className='dot'+extra+(i===idx?' active':'');
   }
 }
 function updateSlideLabel(idx){
   var type=SLIDE_TYPES[idx];
-  if(type==='top20'){document.getElementById('slide-label').textContent='MOST WAGERED TEAMS';}
-  else if(type==='bottom20'){document.getElementById('slide-label').textContent='VALUE HUNT — LEAST WAGERED TEAMS';}
+  if(type==='combined'){document.getElementById('slide-label').textContent='MOST WAGERED vs LEAST WAGERED';}
   else{
     var sf=idx*FLIGHTS_PER_SLIDE+1,ef=sf+FLIGHTS_PER_SLIDE-1;
     var st=idx*FLIGHTS_PER_SLIDE*TEAMS_PER_FLIGHT+1,et=st+FLIGHTS_PER_SLIDE*TEAMS_PER_FLIGHT-1;
@@ -316,7 +349,7 @@ function startProgress(){
   clearInterval(progressTimer);progressStart=Date.now();
   var fill=document.getElementById('progress-fill');fill.style.width='0%';
   progressTimer=setInterval(function(){
-    var pct=Math.min(((Date.now()-progressStart)/SLIDE_DURATION)*100,100);
+    var pct=Math.min(((Date.now()-progressStart)/SLIDE_DURATIONS[currentSlide])*100,100);
     fill.style.width=pct+'%';
     if(pct>=100)clearInterval(progressTimer);
   },PROGRESS_INTERVAL);
@@ -324,8 +357,7 @@ function startProgress(){
 function renderSlide(slideIdx,container){
   container.innerHTML='';
   var type=SLIDE_TYPES[slideIdx];
-  if(type==='top20')renderListSlide(container,'top');
-  else if(type==='bottom20')renderListSlide(container,'bottom');
+  if(type==='combined')renderCombinedSlide(container);
   else renderFlightSlide(container,slideIdx);
 }
 function renderFlightSlide(container,slideIdx){
@@ -388,6 +420,42 @@ function renderListSlide(container,mode){
     rowsWrap.appendChild(row);
   });
   wrap.appendChild(rowsWrap);container.appendChild(wrap);
+}
+function renderCombinedSlide(container){
+  if(!oddsData||!oddsData.teams){container.innerHTML='<div style="color:var(--text-dim);font-family:var(--font-mono);padding:40px;text-align:center">Loading data…</div>';return;}
+  var sorted=oddsData.teams.slice().sort(function(a,b){return b.total-a.total;});
+  var topTeams=sorted.slice(0,20);
+  var botTeams=sorted.slice(-20).reverse();
+  var wrap=document.createElement('div');wrap.className='combined-slide';
+  ['top','bottom'].forEach(function(mode){
+    var teams=mode==='top'?topTeams:botTeams;
+    var panel=document.createElement('div');panel.className='combined-panel';
+    var hdr=document.createElement('div');hdr.className='list-header-compact '+(mode==='top'?'top':'bottom');
+    hdr.innerHTML='<div class="list-header-title">'+(mode==='top'?'🔥 MOST WAGERED':'💎 LEAST WAGERED')+'</div>';
+    panel.appendChild(hdr);
+    var colLabels=document.createElement('div');colLabels.className='list-col-labels-compact';
+    colLabels.innerHTML='<span>#</span><span>Team</span><span>Name</span><span>Total</span><span>Win</span><span>Show</span><span>S-O</span>';
+    panel.appendChild(colLabels);
+    var rowsWrap=document.createElement('div');rowsWrap.className='list-rows-compact';
+    teams.forEach(function(team,i){
+      var rankClass=i===0?'rank-1':i===1?'rank-2':i===2?'rank-3':mode==='top'?'rank-top':'rank-bot';
+      var noBets=!team.winBets&&!team.showBets&&!team.shootoutBets;
+      var idx=team.name.indexOf(' + ');
+      var displayName=idx===-1?esc(team.name):esc(team.name.substring(0,idx).trim())+' <span style="opacity:0.45">+</span> '+esc(team.name.substring(idx+3).trim());
+      var row=document.createElement('div');row.className='list-row-compact';
+      row.innerHTML=
+        '<div class="rank-badge-sm '+rankClass+'">'+(i+1)+'</div>'+
+        '<div class="list-team-num-sm">#'+String(team.num).padStart(2,'0')+'</div>'+
+        '<div class="list-name-single">'+displayName+'</div>'+
+        '<div class="list-total-sm">'+(noBets?'<span style="opacity:0.3">$0</span>':fmtMoney(team.total))+'</div>'+
+        '<div class="list-odds-sm win-odds'+(!team.winBets?' no-bet':'')+'">'+(!team.winBets?'—':esc(team.winOdds))+'</div>'+
+        '<div class="list-odds-sm place-odds'+(!team.showBets?' no-bet':'')+'">'+(!team.showBets?'—':esc(team.showOdds))+'</div>'+
+        '<div class="list-odds-sm show-odds'+(!team.shootoutBets?' no-bet':'')+'">'+(!team.shootoutBets?'—':esc(team.shootoutOdds))+'</div>';
+      rowsWrap.appendChild(row);
+    });
+    panel.appendChild(rowsWrap);wrap.appendChild(panel);
+  });
+  container.appendChild(wrap);
 }
 function buildNameHTML(fullName,prefixClass,textClass,lineClass,color){
   var style=color?'style="color:'+color+'"':'';
