@@ -171,12 +171,12 @@ html, body {
 .combined-panel { display: flex; flex-direction: column; overflow: hidden; }
 .list-row-compact {
   display: grid; grid-template-columns: 32px 40px 1fr 90px 80px 80px 80px;
-  gap: 4px; padding: 4px 8px; border-radius: 4px;
+  gap: 4px; padding: 7px 8px; border-radius: 4px;
   border: 1px solid var(--border); align-items: center;
-  flex-shrink: 0; background: var(--surface); font-size: 12px;
+  flex-shrink: 0; background: var(--surface); font-size: 14px;
 }
 .list-row-compact:nth-child(odd) { background: #F0F3FB; }
-.list-rows-compact { flex: 1; overflow: hidden; display: flex; flex-direction: column; gap: 2px; }
+.list-rows-compact { flex: 1; overflow: hidden; display: flex; flex-direction: column; gap: 3px; }
 .list-col-labels-compact {
   display: grid; grid-template-columns: 32px 40px 1fr 90px 80px 80px 80px;
   gap: 4px; padding: 0 8px 4px; border-bottom: 1px solid var(--border);
@@ -190,15 +190,15 @@ html, body {
 .list-header-compact .list-header-title { font-family: var(--font-head); font-size: 22px; letter-spacing: 2px; }
 .list-header-compact.top    .list-header-title { color: var(--win); }
 .list-header-compact.bottom .list-header-title { color: var(--danger); }
-.rank-badge-sm { font-family: var(--font-head); font-size: 16px; text-align: center; line-height: 1; }
-.list-team-num-sm { font-family: var(--font-head); font-size: 14px; color: var(--gold); text-align: center; line-height: 1; }
-.list-name-single { font-family: var(--font-body); font-size: 12px; font-weight: 500; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.list-total-sm { font-family: var(--font-mono); font-size: 13px; font-weight: 500; color: var(--gold); text-align: right; }
-.list-odds-sm { font-family: var(--font-mono); font-size: 13px; font-weight: 500; text-align: right; }
+.rank-badge-sm { font-family: var(--font-head); font-size: 19px; text-align: center; line-height: 1; }
+.list-team-num-sm { font-family: var(--font-head); font-size: 16px; color: var(--gold); text-align: center; line-height: 1; }
+.list-name-single { font-family: var(--font-body); font-size: 14px; font-weight: 500; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.list-total-sm { font-family: var(--font-mono); font-size: 15px; font-weight: 500; color: var(--gold); text-align: right; }
+.list-odds-sm { font-family: var(--font-mono); font-size: 15px; font-weight: 500; text-align: right; }
 .list-odds-sm.win-odds   { color: var(--win); }
 .list-odds-sm.place-odds { color: var(--show); }
 .list-odds-sm.show-odds  { color: var(--shootout); }
-.list-odds-sm.no-bet { color: var(--text-dim); opacity: 0.4; font-size: 11px; }
+.list-odds-sm.no-bet { color: var(--text-dim); opacity: 0.4; font-size: 13px; }
 </style>
 </head>
 <body>
